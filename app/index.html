@@ -72,6 +72,9 @@ body {
 .tag-minimax { background: rgba(255,100,150,.15); color: #ff6496; }
 .tag-mimo { background: rgba(255,130,0,.15); color: #ff8200; }
 .tag-google { background: rgba(66,133,244,.15); color: #4285f4; }
+.tag-siliconflow { background: rgba(0,180,255,.15); color: #00b4ff; }
+.tag-zhipu { background: rgba(255,80,80,.15); color: #ff5050; }
+.tag-qwen { background: rgba(255,180,0,.15); color: #ffb400; }
 
 .btn { display: inline-flex; align-items: center; gap: .35rem; padding: .5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg3); color: var(--fg); cursor: pointer; font-size: .85rem; font-family: inherit; transition: .15s; }
 .btn:hover { background: rgba(255,255,255,.08); }
@@ -316,7 +319,7 @@ async function revokeKey(id) {
 }
 
 // ========== BYOK (Bring Your Own Key) ==========
-const BYOK_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax'];
+const BYOK_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
 
 function byok() {
   const providerOpts = BYOK_PROVIDERS.map(p => '<option value="' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>').join('');
@@ -567,7 +570,7 @@ function admin() {
     '</div>';
 }
 
-const ALL_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo'];
+const ALL_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
 
 function switchAdminTab(tab) {
   STATE.adminTab = tab;
