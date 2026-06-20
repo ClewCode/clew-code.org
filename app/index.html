@@ -406,7 +406,8 @@ async function deleteProject(id) {
 function orgs() {
   return '<div class="main"><div class="page-header"><h1>Organizations</h1><p>Multi-tenant team management</p></div>' +
     '<button class="btn btn-primary btn-sm" onclick="createOrg()" style="margin-bottom:1rem">+ New Organization</button>' +
-    '<div class="card" id="orgs-container"><div id="orgs-list" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</div></div></div>';
+    '<div class="card" id="orgs-container"><div id="orgs-list" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</div></div>' +
+    '<div id="org-detail" style="display:none"></div></div>';
 }
 
 async function loadOrgs() {
@@ -421,18 +422,18 @@ async function loadOrgs() {
     }
     el.innerHTML = '';
     if (owned.length) {
-      el.innerHTML += '<h3 style="margin:.5rem 0">Owned</h3>';
+      el.innerHTML += '<h3 style="margin:.5rem 0;color:var(--fg2);font-size:.85rem">OWNED</h3>';
       owned.forEach(o => {
-        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line)">' +
-          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + esc(o.id.slice(0,8)) + '... · ' + new Date(o.created_at).toLocaleDateString() + '</span></div>' +
-          '<div><span class="tag tag-enterprise">Owner</span> <button class="btn btn-danger btn-sm" onclick="deleteOrg(\'' + o.id + '\')">Delete</button></div></div>';
+        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line);cursor:pointer" onclick="showOrg(\'' + o.id + '\')">' +
+          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + new Date(o.created_at).toLocaleDateString() + '</span></div>' +
+          '<div><span class="tag tag-enterprise">Owner</span></div></div>';
       });
     }
     if (member.length) {
-      el.innerHTML += '<h3 style="margin:.5rem 0;margin-top:1rem">Member</h3>';
+      el.innerHTML += '<h3 style="margin:.5rem 0;margin-top:1rem;color:var(--fg2);font-size:.85rem">MEMBER</h3>';
       member.forEach(o => {
-        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line)">' +
-          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + esc(o.id.slice(0,8)) + '... · Role: ' + o.role + '</span></div>' +
+        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line);cursor:pointer" onclick="showOrg(\'' + o.id + '\')">' +
+          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + new Date(o.created_at).toLocaleDateString() + ' · Role: ' + o.role + '</span></div>' +
           '<div><span class="tag tag-' + (o.role === 'admin' ? 'pro' : 'free') + '">' + o.role.toUpperCase() + '</span></div></div>';
       });
     }
@@ -449,11 +450,67 @@ async function createOrg() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-async function deleteOrg(id) {
-  if (!confirm('Delete this organization? This cannot be undone.')) return;
+let selectedOrgId = null;
+
+async function showOrg(orgId) {
+  selectedOrgId = orgId;
   try {
-    await api('/v1/orgs/' + id, { method: 'DELETE' });
+    const orgData = await api('/v1/orgs/' + orgId);
+    const membersData = await api('/v1/orgs/' + orgId + '/members');
+    const org = orgData.org;
+    const members = membersData.members || [];
+    const isOwner = org.my_role === 'owner' || org.my_role === 'admin';
+    const el = document.getElementById('org-detail');
+    el.style.display = 'block';
+    el.innerHTML =
+      '<div class="card" style="margin-top:1rem">' +
+      '<div class="card-header"><h3>' + esc(org.name) + '</h3>' +
+      (org.my_role === 'owner' ? '<button class="btn btn-danger btn-sm" onclick="deleteOrgConfirm()">Delete Org</button>' : '') +
+      '</div>' +
+      '<p style="color:var(--fg2);font-size:.85rem">ID: ' + esc(org.id) + ' · Members: ' + org.member_count + ' · Your role: <span class="tag tag-enterprise">' + org.my_role.toUpperCase() + '</span></p>' +
+      (isOwner ? '<button class="btn btn-primary btn-sm" onclick="inviteMember()" style="margin:1rem 0">+ Invite Member</button>' : '') +
+      '<table><thead><tr><th>Email</th><th>Role</th><th>Joined</th>' + (org.my_role === 'owner' ? '<th></th>' : '') + '</tr></thead><tbody>' +
+      members.map(m =>
+        '<tr><td>' + esc(m.email) + '</td>' +
+        '<td><span class="tag tag-' + (m.role === 'owner' ? 'enterprise' : m.role === 'admin' ? 'pro' : 'free') + '">' + m.role.toUpperCase() + '</span></td>' +
+        '<td style="color:var(--fg2)">' + (m.created_at ? new Date(m.created_at).toLocaleDateString() : '') + '</td>' +
+        (org.my_role === 'owner' && m.role !== 'owner' ? '<td><button class="btn btn-danger btn-sm" onclick="removeMember(\'' + m.user_id + '\')">Remove</button></td>' : '') +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+    // Scroll to detail
+    el.scrollIntoView({ behavior: 'smooth' });
+  } catch { toast('Failed to load org details', 'error'); }
+}
+
+async function inviteMember() {
+  const email = prompt('Email of user to invite:');
+  if (!email) return;
+  const role = prompt('Role (admin/member/viewer):', 'member') || 'member';
+  if (!['admin', 'member', 'viewer'].includes(role)) { toast('Invalid role', 'error'); return; }
+  try {
+    await api('/v1/orgs/' + selectedOrgId + '/members', { method: 'POST', body: JSON.stringify({ email, invite_role: role }) });
+    toast('Invited ' + email, 'success');
+    showOrg(selectedOrgId);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function removeMember(userId) {
+  if (!confirm('Remove this member?')) return;
+  try {
+    await api('/v1/orgs/' + selectedOrgId + '/members/' + userId, { method: 'DELETE' });
+    toast('Removed', 'success');
+    showOrg(selectedOrgId);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteOrgConfirm() {
+  if (!confirm('Delete this organization? All members will be removed.')) return;
+  try {
+    await api('/v1/orgs/' + selectedOrgId, { method: 'DELETE' });
     toast('Deleted', 'success');
+    selectedOrgId = null;
+    document.getElementById('org-detail').style.display = 'none';
     loadOrgs();
   } catch (e) { toast(e.message, 'error'); }
 }
