@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clew API — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0a0a0f; --bg2: #12121a; --bg3: #1a1a28;
@@ -14,7 +14,17 @@
   --radius: 10px; --red: #ef4444; --green: #22c55e; --yellow: #f59e0b;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); }
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
 .app { display: flex; min-height: 100vh; }
 
 .sidebar {
@@ -79,8 +89,14 @@ label { display: block; font-size: .85rem; font-weight: 500; color: var(--fg2); 
 
 .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
 .login-box { width: 400px; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 2.5rem; }
+.login-box .term-bar { display: flex; align-items: center; gap: 6px; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+.login-box .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.login-box .term-dot:nth-child(1) { background: #ef4444; }
+.login-box .term-dot:nth-child(2) { background: #f59e0b; }
+.login-box .term-dot:nth-child(3) { background: #22c55e; }
+.login-box .term-label { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--fg3); margin-left: .5rem; }
 .login-box .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-align: center; }
-.login-box h2 { text-align: center; font-size: 1.25rem; margin: .5rem 0 .25rem; }
+.login-box h2 { text-align: center; font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: .5rem 0 .25rem; }
 .login-box .sub { text-align: center; color: var(--fg2); font-size: .85rem; margin-bottom: 2rem; }
 .login-box .error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: var(--red); padding: .75rem; border-radius: 6px; font-size: .85rem; margin-bottom: 1rem; display: none; }
 .login-box .error.show { display: block; }
@@ -159,13 +175,14 @@ function sidebar() {
     { h: 'settings', l: 'Settings' },
   ];
   if (STATE.user?.role === 'admin') links.push({ h: 'admin', l: 'Admin' });
-  return '<div class="sidebar"><a href="#" class="logo" onclick="location.hash=\'overview\'">clew<span>api</span></a><nav>' +
+  return '<div class="sidebar"><a href="#" class="logo" onclick="location.hash=\'overview\'">clew<span>' + (location.hostname === 'clew-code.org' ? 'api' : 'api') + '</span></a><nav>' +
     links.map(l => '<a href="#' + l.h + '" class="' + (STATE.page === l.h ? 'active' : '') + '">' + l.l + '</a>').join('') +
     '</nav><div class="user-info"><div class="name">' + STATE.user.email + '</div><span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></div></div>';
 }
 
 function loginPage() {
   return '<div class="login-page"><div class="login-box">' +
+    '<div class="term-bar"><span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span><span class="term-label">clew-api</span></div>' +
     '<div class="logo">clew<span style="color:var(--fg)">api</span></div><h2 id="auth-title">Sign in</h2>' +
     '<p class="sub" id="auth-sub">Access your Clew API dashboard</p>' +
     '<div class="error" id="auth-error"></div>' +
