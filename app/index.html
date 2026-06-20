@@ -319,7 +319,7 @@ async function revokeKey(id) {
 }
 
 // ========== BYOK (Bring Your Own Key) ==========
-const BYOK_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
+const BYOK_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
 
 function byok() {
   const providerOpts = BYOK_PROVIDERS.map(p => '<option value="' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>').join('');
@@ -570,7 +570,7 @@ function admin() {
     '</div>';
 }
 
-const ALL_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
+const ALL_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'minimax', 'mimo', 'siliconflow', 'zhipu', 'qwen'];
 
 function switchAdminTab(tab) {
   STATE.adminTab = tab;
