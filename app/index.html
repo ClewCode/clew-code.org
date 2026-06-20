@@ -72,6 +72,16 @@ td { padding: .75rem .5rem; font-size: .85rem; border-bottom: 1px solid var(--li
 .tag-enterprise { background: rgba(245,158,11,.15); color: var(--yellow); }
 .tag-active { background: rgba(34,197,94,.15); color: var(--green); }
 .tag-revoked { background: rgba(239,68,68,.15); color: var(--red); }
+.tag-openai { background: rgba(0,200,150,.15); color: #00c896; }
+.tag-groq { background: rgba(242,100,50,.15); color: #f26432; }
+.tag-nvidia { background: rgba(118,185,0,.15); color: #76b900; }
+.tag-deepseek { background: rgba(130,90,255,.15); color: #825aff; }
+.tag-mistral { background: rgba(255,210,0,.15); color: #ffd200; }
+.tag-openrouter { background: rgba(130,180,255,.15); color: #82b4ff; }
+.tag-opencode { background: rgba(0,200,255,.15); color: #00c8ff; }
+.tag-minimax { background: rgba(255,100,150,.15); color: #ff6496; }
+.tag-mimo { background: rgba(255,130,0,.15); color: #ff8200; }
+.tag-google { background: rgba(66,133,244,.15); color: #4285f4; }
 
 input, select {
   width: 100%; padding: .6rem .75rem; background: var(--bg); border: 1px solid var(--line);
@@ -113,7 +123,7 @@ label { display: block; font-size: .85rem; font-weight: 500; color: var(--fg2); 
 <body>
 <div id="app"></div>
 <script>
-const STATE = { user: null, token: localStorage.getItem('clew_session_token') || null, keys: [], page: 'login' };
+const STATE = { user: null, token: localStorage.getItem('clew_session_token') || null, keys: [], models: [], page: 'login' };
 const API_BASE = 'https://api.clew-code.org';
 
 async function api(path, opts = {}) {
@@ -152,7 +162,7 @@ async function render() {
 
   if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
-  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok, models };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -166,13 +176,14 @@ async function render() {
   if (hash === 'projects') loadProjects();
   if (hash === 'orgs') loadOrgs();
   if (hash === 'byok') loadByok();
+  if (hash === 'models') loadModels();
 }
 
 function sidebar() {
   const links = [
     { h: 'overview', l: 'Dashboard' }, { h: 'orgs', l: 'Organizations' },
     { h: 'projects', l: 'Projects' }, { h: 'keys', l: 'API Keys' },
-    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
+    { h: 'models', l: 'Models' }, { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
     { h: 'settings', l: 'Settings' },
   ];
   const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
@@ -356,6 +367,64 @@ async function deleteByokKey(id) {
   if (!confirm('Remove this key?')) return;
   try { await api('/v1/byok/' + id, { method: 'DELETE' }); toast('Removed', 'success'); loadByok(); }
   catch (e) { toast(e.message, 'error'); }
+}
+
+// ========== Models ==========
+function models() {
+  return '<div class="main"><div class="page-header"><h1>Models</h1><p>Browse available AI models</p></div>' +
+    '<div class="card"><div class="card-header"><h3>All Models (' + (STATE.models?.length || 0) + ')</h3>' +
+    '<div style="display:flex;gap:.5rem;align-items:center">' +
+    '<input id="model-search" type="text" placeholder="Search models..." oninput="filterModels()" ' +
+    'style="padding:.4rem .7rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius);font-size:.85rem;width:200px">' +
+    '<select id="model-provider-filter" onchange="filterModels()" ' +
+    'style="padding:.4rem .7rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius);font-size:.85rem">' +
+    '<option value="">All Providers</option></select></div></div>' +
+    '<div style="overflow-x:auto"><table><thead><tr><th>Model</th><th>Provider</th><th>Context</th><th>Input $/1M</th><th>Output $/1M</th></tr></thead>' +
+    '<tbody id="models-table"><tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div></div>';
+}
+
+async function loadModels() {
+  try {
+    const d = await api('/v1/models');
+    STATE.models = d.data || d.models || [];
+    const models = STATE.models;
+
+    // Populate provider filter
+    const providers = [...new Set(models.map(m => m.provider))].sort();
+    const sel = document.getElementById('model-provider-filter');
+    if (sel) {
+      sel.innerHTML = '<option value="">All Providers</option>' +
+        providers.map(p => '<option value="' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>').join('');
+    }
+
+    // Update header count
+    const header = document.querySelector('.card-header h3');
+    if (header) header.textContent = 'All Models (' + models.length + ')';
+
+    filterModels();
+  } catch { document.getElementById('models-table').innerHTML = '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">Failed to load models</td></tr>'; }
+}
+
+function filterModels() {
+  const q = (document.getElementById('model-search')?.value || '').toLowerCase();
+  const prov = document.getElementById('model-provider-filter')?.value || '';
+  const models = STATE.models || [];
+  const filtered = models.filter(m =>
+    (m.id.toLowerCase().includes(q)) &&
+    (!prov || m.provider === prov)
+  );
+  const tbody = document.getElementById('models-table');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">No models match your search</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(m =>
+    '<tr><td style="font-family:var(--mono);font-size:.85rem">' + m.id + '</td>' +
+    '<td><span class="tag tag-' + m.provider + '">' + m.provider + '</span></td>' +
+    '<td>' + (m.context ? (m.context >= 1000000 ? (m.context / 1000000).toFixed(0) + 'M' : (m.context / 1000).toFixed(0) + 'K') : '—') + '</td>' +
+    '<td>' + (m.pricing ? m.pricing.split('/')[0] || '—' : (m.inputCost ? '$' + m.inputCost : '—')) + '</td>' +
+    '<td>' + (m.pricing ? m.pricing.split('/')[1] || '—' : (m.outputCost ? '$' + m.outputCost : '—')) + '</td></tr>'
+  ).join('');
 }
 
 function usage() {
