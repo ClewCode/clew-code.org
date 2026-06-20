@@ -237,15 +237,14 @@ async function loadOverview() {
     document.getElementById('stat-cost').textContent = '$' + (sum.total_cost || 0).toFixed(4);
     document.getElementById('stat-keys').textContent = me.user?.active_keys || '0';
 
-    // Fake chart bars (real daily data requires separate endpoint)
+    // Real chart data from daily stats
+    const daily = await api('/v1/usage/daily?days=30');
     const chart = document.getElementById('usage-chart');
-    chart.innerHTML = '';
-    for (let i = 0; i < 14; i++) {
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      bar.style.height = (4 + Math.random() * 40) + 'px';
-      chart.appendChild(bar);
-    }
+    const maxTokens = Math.max(...daily.chart.map(d => d.tokens), 1);
+    chart.innerHTML = daily.chart.map(d => {
+      const h = d.tokens > 0 ? Math.max(4, (d.tokens / maxTokens) * 80) : 2;
+      return '<div class="chart-bar" style="height:' + h + 'px" title="' + d.date + ': ' + d.tokens.toLocaleString() + ' tokens"></div>';
+    }).join('');
   } catch (e) {
     document.getElementById('stat-requests').textContent = '?';
     document.getElementById('stat-tokens').textContent = '?';
