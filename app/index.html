@@ -152,7 +152,7 @@ async function render() {
 
   if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
-  const pages = { overview, keys, usage, billing, settings, admin, instances, events };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -163,13 +163,14 @@ async function render() {
   if (hash === 'instances') loadInstances();
   if (hash === 'events') loadEvents();
   if (hash === 'admin') loadAdminStats();
+  if (hash === 'projects') loadProjects();
 }
 
 function sidebar() {
   const links = [
-    { h: 'overview', l: 'Dashboard' }, { h: 'keys', l: 'API Keys' },
-    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' },
-    { h: 'settings', l: 'Settings' },
+    { h: 'overview', l: 'Dashboard' }, { h: 'projects', l: 'Projects' },
+    { h: 'keys', l: 'API Keys' }, { h: 'usage', l: 'Usage' },
+    { h: 'billing', l: 'Billing' }, { h: 'settings', l: 'Settings' },
   ];
   const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
     ? [{ h: 'admin', l: 'Admin' }, { h: 'instances', l: 'Instances' }, { h: 'events', l: 'Events' }]
@@ -356,6 +357,48 @@ function settings() {
     '<div class="card"><div class="form-group"><label>Email</label><input value="' + STATE.user.email + '" disabled></div>' +
     '<div class="form-group"><label>API Token</label><input value="' + STATE.token + '" readonly onclick="this.select()"></div></div>' +
     '<button class="btn btn-danger" onclick="logout()">Sign Out</button></div>';
+}
+
+function projects() {
+  return '<div class="main"><div class="page-header"><h1>Projects</h1><p>Organize API keys into projects</p></div>' +
+    '<button class="btn btn-primary btn-sm" onclick="createProject()" style="margin-bottom:1rem">+ New Project</button>' +
+    '<div class="card"><table><thead><tr><th>Name</th><th>Description</th><th>Keys</th><th>Monthly Tokens</th><th>Created</th><th></th></tr></thead>' +
+    '<tbody id="projects-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadProjects() {
+  try {
+    const data = await api('/v1/projects');
+    const tbody = document.getElementById('projects-table');
+    const list = data.projects || [];
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">No projects. Create one!</td></tr>'; return; }
+    tbody.innerHTML = list.map(p =>
+      '<tr><td><strong>' + esc(p.name) + '</strong></td><td style="color:var(--fg2)">' + esc(p.description || '—') + '</td>' +
+      '<td>' + p.key_count + '</td><td>' + (p.monthly_tokens || 0).toLocaleString() + '</td>' +
+      '<td style="color:var(--fg2)">' + (p.created_at ? new Date(p.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.id + '\')">Delete</button></td></tr>'
+    ).join('');
+  } catch { document.getElementById('projects-table').innerHTML = '<tr><td colspan="6" style="color:var(--red);text-align:center">Failed</td></tr>'; }
+}
+
+async function createProject() {
+  const name = prompt('Project name:');
+  if (!name) return;
+  const desc = prompt('Description (optional):') || '';
+  try {
+    await api('/v1/projects', { method: 'POST', body: JSON.stringify({ name, description: desc }) });
+    toast('Project created', 'success');
+    loadProjects();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project? Keys will be unlinked but not revoked.')) return;
+  try {
+    await api('/v1/projects/' + id, { method: 'DELETE' });
+    toast('Deleted', 'success');
+    loadProjects();
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 function admin() {
