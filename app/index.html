@@ -529,26 +529,79 @@ async function deleteOrgConfirm() {
 }
 
 function admin() {
-  if (STATE.user?.role !== 'admin' && STATE.user?.tier !== 'enterprise') return '<div class="main"><h1>Access Denied</h1></div>';
-  return '<div class="main"><div class="page-header"><h1>Admin</h1><p>System overview</p></div>' +
+  if (STATE.user?.tier !== 'enterprise') return '<div class="main"><h1>Access Denied</h1></div>';
+  return '<div class="main"><div class="page-header"><h1>Admin</h1><p>System management</p></div>' +
     '<div class="stats-grid"><div class="stat-card"><div class="label">Active (24h)</div><div class="value" id="admin-active" style="color:var(--accent)">—</div></div>' +
-    '<div class="stat-card"><div class="label">Total Instances</div><div class="value" id="admin-instances" style="color:var(--accent2)">—</div></div>' +
+    '<div class="stat-card"><div class="label">Users</div><div class="value" id="admin-users" style="color:var(--accent2)">—</div></div>' +
     '<div class="stat-card"><div class="label">Total Events</div><div class="value" id="admin-events" style="color:var(--fg)">—</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Provider Keys</h3></div>' +
+    '<table><thead><tr><th>Provider</th><th>Status</th><th></th></tr></thead><tbody id="admin-providers"><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div>' +
+    '<div class="card"><div class="card-header"><h3>Users</h3></div>' +
+    '<table><thead><tr><th>Email</th><th>Tier</th><th>Tokens</th><th>Keys</th><th>Created</th><th></th></tr></thead><tbody id="admin-users-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div>' +
     '<div class="card"><div class="card-header"><h3>Version Distribution</h3></div>' +
     '<table><thead><tr><th>Version</th><th>Instances</th></tr></thead><tbody id="admin-versions"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
 
 async function loadAdminStats() {
   try {
-    const s = await api('/v1/telemetry/stats');
+    const [s, u, pk] = await Promise.all([
+      api('/v1/telemetry/stats'),
+      api('/v1/admin/users'),
+      api('/v1/admin/provider-keys'),
+    ]);
     document.getElementById('admin-active').textContent = fmt(s.active_1d);
-    document.getElementById('admin-instances').textContent = fmt(s.total_instances);
+    document.getElementById('admin-users').textContent = fmt((u.users || []).length);
     document.getElementById('admin-events').textContent = fmt(s.total_events);
+
+    // Provider keys
+    const pt = document.getElementById('admin-providers');
+    const providers = pk.providers || {};
+    pt.innerHTML = Object.entries(providers).map(([name, set]) =>
+      '<tr><td style="font-weight:600">' + name + '</td>' +
+      '<td><span class="tag ' + (set ? 'tag-active' : 'tag-revoked') + '">' + (set ? 'Set' : 'Not set') + '</span></td>' +
+      '<td>' + (set ? '' : '<button class="btn btn-primary btn-sm" onclick="setProviderKey(\'' + name + '\')">Set Key</button>') + '</td></tr>'
+    ).join('');
+
+    // Users table
+    const ut = document.getElementById('admin-users-table');
+    const users = u.users || [];
+    ut.innerHTML = users.map(u2 =>
+      '<tr><td>' + esc(u2.email) + '</td>' +
+      '<td><span class="tag tag-' + u2.tier + '">' + u2.tier.toUpperCase() + '</span></td>' +
+      '<td>' + fmt(u2.total_tokens_used || 0) + '</td>' +
+      '<td>' + (u2.key_count || 0) + '</td>' +
+      '<td style="color:var(--fg2);font-size:.8rem">' + (u2.created_at ? new Date(u2.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td>' + (u2.tier !== 'enterprise' ? '<button class="btn btn-sm" onclick="upgradeUser(\'' + u2.id + '\',\'' + u2.tier + '\')">Upgrade</button>' : '') + '</td></tr>'
+    ).join('');
+
+    // Versions
     const vt = document.getElementById('admin-versions');
     const versions = s.version_distribution || [];
-    if (!versions.length) { vt.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>'; return; }
-    vt.innerHTML = versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('');
+    vt.innerHTML = versions.length ? versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
   } catch {}
+}
+
+async function setProviderKey(provider) {
+  const key = prompt('Enter API key for ' + provider + ':');
+  if (!key) return;
+  try {
+    await api('/v1/admin/provider-keys', { method: 'POST', body: JSON.stringify({ provider, key }) });
+    toast(provider + ' key set!', 'success');
+    loadAdminStats();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function upgradeUser(userId, currentTier) {
+  const tiers = ['free', 'pro', 'enterprise'];
+  const next = tiers.indexOf(currentTier) + 1;
+  if (next >= tiers.length) { toast('Already at max tier', 'error'); return; }
+  const newTier = tiers[next];
+  if (!confirm('Upgrade user to ' + newTier + '?')) return;
+  try {
+    await api('/v1/admin/users/' + userId, { method: 'PATCH', body: JSON.stringify({ tier: newTier }) });
+    toast('Upgraded to ' + newTier, 'success');
+    loadAdminStats();
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 function instances() {
