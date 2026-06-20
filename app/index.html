@@ -152,7 +152,7 @@ async function render() {
 
   if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
-  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -165,13 +165,14 @@ async function render() {
   if (hash === 'admin') loadAdminStats();
   if (hash === 'projects') loadProjects();
   if (hash === 'orgs') loadOrgs();
+  if (hash === 'byok') loadByok();
 }
 
 function sidebar() {
   const links = [
     { h: 'overview', l: 'Dashboard' }, { h: 'orgs', l: 'Organizations' },
     { h: 'projects', l: 'Projects' }, { h: 'keys', l: 'API Keys' },
-    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' },
+    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
     { h: 'settings', l: 'Settings' },
   ];
   const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
@@ -307,6 +308,53 @@ async function createKeyWithCap() {
 async function revokeKey(id) {
   if (!confirm('Revoke this key?')) return;
   try { await api('/v1/keys/' + id, { method: 'DELETE' }); toast('Revoked', 'success'); loadKeys(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+// ========== BYOK (Bring Your Own Key) ==========
+const BYOK_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax'];
+
+function byok() {
+  const providerOpts = BYOK_PROVIDERS.map(p => '<option value="' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>').join('');
+  return '<div class="main"><div class="page-header"><h1>My Provider Keys</h1>' +
+    '<p>Add your own API keys to access paid models, or use our free pool</p></div>' +
+    '<div class="card"><div class="card-header"><h3>Your Keys</h3></div>' +
+    '<div style="padding:1rem;display:flex;gap:.5rem;flex-wrap:wrap">' +
+    '<select id="byok-provider" style="flex:1;min-width:140px;padding:.5rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius)">' + providerOpts + '</select>' +
+    '<input id="byok-key" type="password" placeholder="sk-..." style="flex:2;min-width:200px;padding:.5rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius)">' +
+    '<button class="btn btn-primary btn-sm" onclick="addByokKey()">+ Add Key</button></div>' +
+    '<table><thead><tr><th>Provider</th><th>Key Prefix</th><th>Added</th><th></th></tr></thead>' +
+    '<tbody id="byok-table"><tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadByok() {
+  try {
+    const d = await api('/v1/byok');
+    const tbody = document.getElementById('byok-table');
+    if (!d.keys || !d.keys.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">No keys added yet. Add your own API key above to access premium models.</td></tr>'; return; }
+    tbody.innerHTML = d.keys.map(k =>
+      '<tr><td style="font-weight:500">' + k.provider + '</td>' +
+      '<td style="font-family:var(--mono)">' + k.key_prefix + '...</td>' +
+      '<td>' + (k.created_at || '').slice(0, 10) + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="deleteByokKey(\'' + k.id + '\')">Remove</button></td></tr>'
+    ).join('');
+  } catch { document.getElementById('byok-table').innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">Failed to load</td></tr>'; }
+}
+
+async function addByokKey() {
+  const provider = document.getElementById('byok-provider').value;
+  const key = document.getElementById('byok-key').value;
+  if (!key) { toast('Enter an API key', 'error'); return; }
+  try {
+    const d = await api('/v1/byok', { method: 'POST', body: JSON.stringify({ provider, key }) });
+    if (d.ok) { toast('Key added!', 'success'); document.getElementById('byok-key').value = ''; loadByok(); }
+    else toast(d.error || 'Failed', 'error');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteByokKey(id) {
+  if (!confirm('Remove this key?')) return;
+  try { await api('/v1/byok/' + id, { method: 'DELETE' }); toast('Removed', 'success'); loadByok(); }
   catch (e) { toast(e.message, 'error'); }
 }
 
