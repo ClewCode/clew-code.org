@@ -152,7 +152,7 @@ async function render() {
 
   if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
-  const pages = { overview, keys, usage, billing, settings, admin };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -160,6 +160,9 @@ async function render() {
   if (hash === 'overview') loadOverview();
   if (hash === 'keys') loadKeys();
   if (hash === 'usage') loadUsage();
+  if (hash === 'instances') loadInstances();
+  if (hash === 'events') loadEvents();
+  if (hash === 'admin') loadAdminStats();
 }
 
 function sidebar() {
@@ -168,8 +171,11 @@ function sidebar() {
     { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' },
     { h: 'settings', l: 'Settings' },
   ];
-  if (STATE.user?.role === 'admin') links.push({ h: 'admin', l: 'Admin' });
-  return '<div class="sidebar"><a href="#" class="logo" onclick="location.hash=\'overview\'">clew<span>' + (location.hostname === 'clew-code.org' ? 'api' : 'api') + '</span></a><nav>' +
+  const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
+    ? [{ h: 'admin', l: 'Admin' }, { h: 'instances', l: 'Instances' }, { h: 'events', l: 'Events' }]
+    : [];
+  links.push(...adminLinks);
+  return '<div class="sidebar"><a href="#" class="logo" onclick="location.hash=\'overview\'">clew<span>api</span></a><nav>' +
     links.map(l => '<a href="#' + l.h + '" class="' + (STATE.page === l.h ? 'active' : '') + '">' + l.l + '</a>').join('') +
     '</nav><div class="user-info"><div class="name">' + STATE.user.email + '</div><span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></div></div>';
 }
@@ -353,16 +359,62 @@ function settings() {
 }
 
 function admin() {
-  if (STATE.user?.role !== 'admin') return '<div class="main"><h1>Access Denied</h1></div>';
-  return '<div class="main"><div class="page-header"><h1>Admin Panel</h1><p>Users and provider keys</p></div>' +
-    '<div class="card"><h3>Users</h3><table><thead><tr><th>Email</th><th>Tier</th><th>Tokens</th><th>Keys</th></tr></thead>' +
-    '<tbody><tr><td>admin@clew.dev</td><td><span class="tag tag-enterprise">Enterprise</span></td><td>0</td><td>1</td></tr></tbody></table></div>' +
-    '<div class="card"><h3>Upstream Providers</h3><table><thead><tr><th>Provider</th><th>API Key</th></tr></thead>' +
-    '<tbody><tr><td>OpenAI</td><td><span class="tag tag-active">Set</span></td></tr>' +
-    '<tr><td>DeepSeek</td><td><span class="tag tag-revoked">Not set</span></td></tr>' +
-    '<tr><td>Groq</td><td><span class="tag tag-revoked">Not set</span></td></tr>' +
-    '<tr><td>Mistral</td><td><span class="tag tag-revoked">Not set</span></td></tr></tbody></table></div></div>';
+  if (STATE.user?.role !== 'admin' && STATE.user?.tier !== 'enterprise') return '<div class="main"><h1>Access Denied</h1></div>';
+  return '<div class="main"><div class="page-header"><h1>Admin</h1><p>System overview</p></div>' +
+    '<div class="stats-grid"><div class="stat-card"><div class="label">Active (24h)</div><div class="value" id="admin-active" style="color:var(--accent)">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Instances</div><div class="value" id="admin-instances" style="color:var(--accent2)">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Events</div><div class="value" id="admin-events" style="color:var(--fg)">—</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Version Distribution</h3></div>' +
+    '<table><thead><tr><th>Version</th><th>Instances</th></tr></thead><tbody id="admin-versions"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
+
+async function loadAdminStats() {
+  try {
+    const s = await api('/v1/telemetry/stats');
+    document.getElementById('admin-active').textContent = fmt(s.active_1d);
+    document.getElementById('admin-instances').textContent = fmt(s.total_instances);
+    document.getElementById('admin-events').textContent = fmt(s.total_events);
+    const vt = document.getElementById('admin-versions');
+    const versions = s.version_distribution || [];
+    if (!versions.length) { vt.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>'; return; }
+    vt.innerHTML = versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('');
+  } catch {}
+}
+
+function instances() {
+  return '<div class="main"><div class="page-header"><h1>Instances</h1><p>Active Clew Code clients</p></div>' +
+    '<div class="card"><table><thead><tr><th>Version</th><th>Count</th></tr></thead>' +
+    '<tbody id="instances-table"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadInstances() {
+  try {
+    const s = await api('/v1/telemetry/stats');
+    const versions = s.version_distribution || [];
+    const tbody = document.getElementById('instances-table');
+    if (!versions.length) { tbody.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>'; return; }
+    tbody.innerHTML = versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('');
+  } catch { document.getElementById('instances-table').innerHTML = '<tr><td colspan="2" style="color:var(--red);text-align:center">Failed</td></tr>'; }
+}
+
+function events() {
+  return '<div class="main"><div class="page-header"><h1>Events</h1><p>Telemetry events (7 days)</p></div>' +
+    '<div class="card"><table><thead><tr><th>Event</th><th>Count</th></tr></thead>' +
+    '<tbody id="events-table"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadEvents() {
+  try {
+    const s = await api('/v1/telemetry/stats');
+    const rows = s.top_events_7d || [];
+    const tbody = document.getElementById('events-table');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No events</td></tr>'; return; }
+    tbody.innerHTML = rows.map(e => '<tr><td>' + esc(e.event) + '</td><td>' + fmt(e.count) + '</td></tr>').join('');
+  } catch { document.getElementById('events-table').innerHTML = '<tr><td colspan="2" style="color:var(--red);text-align:center">Failed</td></tr>'; }
+}
+
+function fmt(n) { return Number(n || 0).toLocaleString(); }
+function esc(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
 
 function logout() {
   STATE.token = null; STATE.user = null; localStorage.removeItem('clew_session_token');
