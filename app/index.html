@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clew API — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f; --bg2: #12121a; --bg3: #1a1a28;
+  --fg: #e4e4e7; --fg2: #a1a1aa; --fg3: #6b6b80;
+  --accent: #a855f7; --accent2: #c084fc;
+  --purple-dim: #3b0764; --line: #27272a;
+  --radius: 10px; --red: #ef4444; --green: #22c55e; --yellow: #f59e0b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); }
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 260px; background: var(--bg2); border-right: 1px solid var(--line);
+  padding: 1.5rem; display: flex; flex-direction: column; flex-shrink: 0;
+}
+.sidebar .logo { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.2rem; color: var(--accent); margin-bottom: 2rem; text-decoration: none; display: block; }
+.sidebar .logo span { color: var(--fg); }
+.sidebar nav { display: flex; flex-direction: column; gap: .25rem; flex: 1; }
+.sidebar a {
+  display: flex; align-items: center; gap: .75rem; padding: .65rem 1rem; border-radius: 8px;
+  color: var(--fg2); text-decoration: none; font-size: .9rem; font-weight: 500; transition: all .15s;
+}
+.sidebar a:hover { background: var(--bg3); color: var(--fg); }
+.sidebar a.active { background: rgba(168,85,247,.1); color: var(--accent); }
+.sidebar .user-info { padding-top: 1rem; border-top: 1px solid var(--line); margin-top: auto; font-size: .8rem; color: var(--fg3); }
+.sidebar .user-info .name { color: var(--fg); font-weight: 600; }
+
+.main { flex: 1; padding: 2rem; overflow-y: auto; max-width: 1100px; }
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; }
+.page-header p { color: var(--fg2); font-size: .9rem; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
+.stat-card .label { font-size: .8rem; color: var(--fg2); }
+.stat-card .value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; }
+
+.card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.card-header h3 { font-size: .95rem; font-weight: 600; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.25rem; border-radius: 8px;
+  font-weight: 600; font-size: .85rem; cursor: pointer; border: none; text-decoration: none; transition: all .15s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #9333ea; }
+.btn-outline { background: transparent; border: 1px solid var(--line); color: var(--fg); }
+.btn-danger { background: var(--red); color: white; }
+.btn-sm { padding: .35rem .75rem; font-size: .8rem; }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: .8rem; font-weight: 600; color: var(--fg3); padding: .75rem .5rem; border-bottom: 1px solid var(--line); }
+td { padding: .75rem .5rem; font-size: .85rem; border-bottom: 1px solid var(--line); }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+
+.tag { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 600; }
+.tag-free { background: var(--bg3); color: var(--fg2); }
+.tag-pro { background: var(--purple-dim); color: var(--accent); }
+.tag-enterprise { background: rgba(245,158,11,.15); color: var(--yellow); }
+.tag-active { background: rgba(34,197,94,.15); color: var(--green); }
+.tag-revoked { background: rgba(239,68,68,.15); color: var(--red); }
+
+input, select {
+  width: 100%; padding: .6rem .75rem; background: var(--bg); border: 1px solid var(--line);
+  border-radius: 6px; color: var(--fg); font-size: .9rem; outline: none;
+}
+input:focus { border-color: var(--accent); }
+.form-group { margin-bottom: 1rem; }
+label { display: block; font-size: .85rem; font-weight: 500; color: var(--fg2); margin-bottom: .35rem; }
+
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+.login-box { width: 400px; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 2.5rem; }
+.login-box .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-align: center; }
+.login-box h2 { text-align: center; font-size: 1.25rem; margin: .5rem 0 .25rem; }
+.login-box .sub { text-align: center; color: var(--fg2); font-size: .85rem; margin-bottom: 2rem; }
+.login-box .error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: var(--red); padding: .75rem; border-radius: 6px; font-size: .85rem; margin-bottom: 1rem; display: none; }
+.login-box .error.show { display: block; }
+.login-box .switch { text-align: center; font-size: .85rem; color: var(--fg2); margin-top: 1.5rem; }
+.login-box .switch a { color: var(--accent); text-decoration: none; cursor: pointer; }
+
+.toast { position: fixed; top: 1rem; right: 1rem; padding: .75rem 1.25rem; border-radius: 8px; font-size: .85rem; z-index: 1000; animation: slideIn .3s; max-width: 400px; display: none; }
+.toast-success { background: rgba(34,197,94,.15); border: 1px solid var(--green); color: var(--green); }
+.toast-error { background: rgba(239,68,68,.15); border: 1px solid var(--red); color: var(--red); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+@media (max-width: 768px) { .sidebar { width: auto; padding: 1rem; } .sidebar a span:last-child { display: none; } .sidebar .user-info { display: none; } }
+
+.chart-bars { display: flex; gap: 4px; align-items: flex-end; height: 120px; padding: .5rem 0; }
+.chart-bar { flex: 1; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; opacity: .7; }
+.chart-bar:hover { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const STATE = { user: null, token: localStorage.getItem('clew_session_token') || null, keys: [], page: 'login' };
+const API_BASE = 'https://api.clew-code.org';
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
+  const res = await fetch(API_BASE + path, { ...opts, headers: { ...headers, ...opts.headers } });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast toast-' + type; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+async function render() {
+  const hash = location.hash.slice(1) || 'overview';
+  STATE.page = hash;
+  const app = document.getElementById('app');
+
+  // Try to restore session
+  const t = localStorage.getItem('clew_session_token');
+  if (t && !STATE.user) {
+    STATE.token = t;
+    try {
+      const data = await api('/v1/auth/me');
+      STATE.user = data.user;
+    } catch {
+      STATE.token = null;
+      STATE.user = null;
+      localStorage.removeItem('clew_session_token');
+    }
+  }
+
+  if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
+
+  const pages = { overview, keys, usage, billing, settings, admin };
+  const content = (pages[hash] || overview)();
+  app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
+  if (hash === 'keys') loadKeys();
+}
+
+function sidebar() {
+  const links = [
+    { h: 'overview', l: 'Dashboard' }, { h: 'keys', l: 'API Keys' },
+    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' },
+    { h: 'settings', l: 'Settings' },
+  ];
+  if (STATE.user?.role === 'admin') links.push({ h: 'admin', l: 'Admin' });
+  return '<div class="sidebar"><a href="#" class="logo" onclick="location.hash=\'overview\'">clew<span>api</span></a><nav>' +
+    links.map(l => '<a href="#' + l.h + '" class="' + (STATE.page === l.h ? 'active' : '') + '">' + l.l + '</a>').join('') +
+    '</nav><div class="user-info"><div class="name">' + STATE.user.email + '</div><span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></div></div>';
+}
+
+function loginPage() {
+  return '<div class="login-page"><div class="login-box">' +
+    '<div class="logo">clew<span style="color:var(--fg)">api</span></div><h2 id="auth-title">Sign in</h2>' +
+    '<p class="sub" id="auth-sub">Access your Clew API dashboard</p>' +
+    '<div class="error" id="auth-error"></div>' +
+    '<form id="auth-form" onsubmit="return false">' +
+    '<div class="form-group"><label>Email</label><input type="email" id="auth-email" placeholder="you@example.com" required></div>' +
+    '<div class="form-group"><label>Password</label><input type="password" id="auth-password" placeholder="Enter password" required></div>' +
+    '<button class="btn btn-primary" style="width:100%;justify-content:center" id="auth-btn">Sign in</button></form>' +
+    '<div class="switch"><span id="auth-switch-text">Don\'t have an account? </span><a id="auth-switch-link">Sign up</a></div></div></div>';
+}
+
+function bindLogin() {
+  let isLogin = true;
+  const toggle = () => {
+    isLogin = !isLogin;
+    document.getElementById('auth-title').textContent = isLogin ? 'Sign in' : 'Create account';
+    document.getElementById('auth-btn').textContent = isLogin ? 'Sign in' : 'Create account';
+    document.getElementById('auth-switch-text').textContent = isLogin ? "Don't have an account? " : "Already have an account? ";
+    document.getElementById('auth-switch-link').textContent = isLogin ? 'Sign up' : 'Sign in';
+    document.getElementById('auth-error').classList.remove('show');
+  };
+  document.getElementById('auth-switch-link').onclick = toggle;
+  document.getElementById('auth-form').onsubmit = async () => {
+    const err = document.getElementById('auth-error');
+    err.classList.remove('show');
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    document.getElementById('auth-btn').disabled = true;
+    try {
+      const endpoint = isLogin ? '/v1/auth/login' : '/v1/auth/signup';
+      const data = await api(endpoint, { method: 'POST', body: JSON.stringify({ email, password }) });
+      STATE.token = data.token;
+      STATE.user = data.user;
+      localStorage.setItem('clew_session_token', data.token);
+      location.hash = 'overview';
+    } catch (e) { err.textContent = e.message; err.classList.add('show'); }
+    document.getElementById('auth-btn').disabled = false;
+  };
+}
+
+function overview() {
+  return '<div class="main"><div class="page-header"><h1>Dashboard</h1><p>Clew API overview</p></div>' +
+    '<div class="stats-grid">' +
+    '<div class="stat-card"><div class="label">Requests (30d)</div><div class="value" style="color:var(--accent)">0</div></div>' +
+    '<div class="stat-card"><div class="label">Tokens Used</div><div class="value" style="color:var(--accent2)">0</div></div>' +
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" style="color:var(--fg)">$0.00</div></div>' +
+    '<div class="stat-card"><div class="label">Active Keys</div><div class="value" style="color:var(--fg)">0</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Usage (Last 30 Days)</h3></div>' +
+    '<div class="chart-bars">' + Array.from({length: 14}, () => '<div class="chart-bar" style="height:' + (4 + Math.random() * 40) + 'px"></div>').join('') + '</div></div></div>';
+}
+
+function keys() {
+  return '<div class="main"><div class="page-header"><h1>API Keys</h1><p>Manage your API keys</p></div>' +
+    '<div class="card"><div class="card-header"><h3>Your Keys</h3><button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button></div>' +
+    '<table><thead><tr><th>Name</th><th>Key</th><th>Status</th><th>Created</th><th>Last Used</th><th></th></tr></thead>' +
+    '<tbody id="keys-table"><tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadKeys() {
+  try {
+    const data = await api('/v1/keys');
+    STATE.keys = data.keys || [];
+    const tbody = document.getElementById('keys-table');
+    if (!STATE.keys.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">No keys. Create one!</td></tr>'; return; }
+    tbody.innerHTML = STATE.keys.map(k =>
+      '<tr><td>' + k.name + '</td><td class="mono">' + k.key_prefix + '...</td>' +
+      '<td><span class="tag ' + (k.active ? 'tag-active' : 'tag-revoked') + '">' + (k.active ? 'Active' : 'Revoked') + '</span></td>' +
+      '<td class="mono">' + (k.created_at ? new Date(k.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td class="mono">' + (k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : 'Never') + '</td>' +
+      '<td>' + (k.active ? '<button class="btn btn-danger btn-sm" onclick="revokeKey(\'' + k.id + '\')">Revoke</button>' : '') + '</td></tr>'
+    ).join('');
+  } catch (e) { document.getElementById('keys-table').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red)">Failed to load keys</td></tr>'; }
+}
+
+async function createKey() {
+  const name = prompt('Name for this key:');
+  if (!name) return;
+  try { const d = await api('/v1/keys', { method: 'POST' }); toast('Key: ' + d.key, 'success'); loadKeys(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function revokeKey(id) {
+  if (!confirm('Revoke this key?')) return;
+  try { await api('/v1/keys/' + id, { method: 'DELETE' }); toast('Revoked', 'success'); loadKeys(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+function usage() {
+  return '<div class="main"><div class="page-header"><h1>Usage</h1><p>Token usage and costs by provider</p></div>' +
+    '<div class="stats-grid"><div class="stat-card"><div class="label">Prompt Tokens</div><div class="value">0</div></div>' +
+    '<div class="stat-card"><div class="label">Completion Tokens</div><div class="value">0</div></div>' +
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value">$0.00</div></div></div>' +
+    '<div class="card"><h3>By Provider</h3><table><thead><tr><th>Provider</th><th>Tokens</th><th>Cost</th></tr></thead>' +
+    '<tbody><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">No data yet</td></tr></tbody></table></div></div>';
+}
+
+function billing() {
+  const tiers = ['free', 'pro', 'enterprise'];
+  const prices = ['$0', '$10/mo', '$100/mo'];
+  const limits = ['100K tokens', '5M tokens', 'Unlimited'];
+  const cls = ['tag-free', 'tag-pro', 'tag-enterprise'];
+  return '<div class="main"><div class="page-header"><h1>Billing</h1><p>Manage subscription</p></div>' +
+    '<div class="plans-grid">' + tiers.map((t, i) =>
+      '<div class="card" style="' + (STATE.user.tier === t ? 'border-color:var(--accent)' : '') + '">' +
+      '<h3>' + t.charAt(0).toUpperCase() + t.slice(1) + '</h3>' +
+      '<div style="font-size:2rem;font-weight:700;font-family:JetBrains Mono">' + prices[i] + '</div>' +
+      '<p style="color:var(--fg2);margin:.5rem 0">' + limits[i] + '/month</p>' +
+      (STATE.user.tier === t ? '<span class="tag ' + cls[i] + '">Current</span>' :
+        '<button class="btn btn-primary btn-sm" onclick="upgrade(\'' + t + '\')">' + (t === 'free' ? 'Downgrade' : 'Upgrade') + '</button>') +
+      '</div>'
+    ).join('') + '</div><div class="card"><h3>Billing History</h3><p style="color:var(--fg2);font-size:.85rem">No invoices yet</p></div></div>';
+}
+
+async function upgrade(tier) {
+  try { const d = await api('/v1/billing/checkout', { method: 'POST', body: JSON.stringify({ tier }) }); toast(d.message || 'Upgraded', 'success'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+function settings() {
+  return '<div class="main"><div class="page-header"><h1>Settings</h1><p>Account settings</p></div>' +
+    '<div class="card"><div class="form-group"><label>Email</label><input value="' + STATE.user.email + '" disabled></div>' +
+    '<div class="form-group"><label>API Token</label><input value="' + STATE.token + '" readonly onclick="this.select()"></div></div>' +
+    '<button class="btn btn-danger" onclick="logout()">Sign Out</button></div>';
+}
+
+function admin() {
+  if (STATE.user?.role !== 'admin') return '<div class="main"><h1>Access Denied</h1></div>';
+  return '<div class="main"><div class="page-header"><h1>Admin Panel</h1><p>Users and provider keys</p></div>' +
+    '<div class="card"><h3>Users</h3><table><thead><tr><th>Email</th><th>Tier</th><th>Tokens</th><th>Keys</th></tr></thead>' +
+    '<tbody><tr><td>admin@clew.dev</td><td><span class="tag tag-enterprise">Enterprise</span></td><td>0</td><td>1</td></tr></tbody></table></div>' +
+    '<div class="card"><h3>Upstream Providers</h3><table><thead><tr><th>Provider</th><th>API Key</th></tr></thead>' +
+    '<tbody><tr><td>OpenAI</td><td><span class="tag tag-active">Set</span></td></tr>' +
+    '<tr><td>DeepSeek</td><td><span class="tag tag-revoked">Not set</span></td></tr>' +
+    '<tr><td>Groq</td><td><span class="tag tag-revoked">Not set</span></td></tr>' +
+    '<tr><td>Mistral</td><td><span class="tag tag-revoked">Not set</span></td></tr></tbody></table></div></div>';
+}
+
+function logout() {
+  STATE.token = null; STATE.user = null; localStorage.removeItem('clew_session_token');
+  location.hash = 'login'; render();
+}
+
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
