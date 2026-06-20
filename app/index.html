@@ -12,6 +12,7 @@
   --accent: #a855f7; --accent2: #c084fc;
   --purple-dim: #3b0764; --line: #27272a;
   --radius: 10px; --red: #ef4444; --green: #22c55e; --yellow: #f59e0b;
+  --mono: 'JetBrains Mono', monospace;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -28,45 +29,34 @@ body {
 .sidebar .logo { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.2rem; color: var(--accent); margin-bottom: 2rem; text-decoration: none; display: block; }
 .sidebar .logo span { color: var(--fg); }
 .sidebar nav { display: flex; flex-direction: column; gap: .25rem; flex: 1; }
-.sidebar a {
-  display: flex; align-items: center; gap: .75rem; padding: .65rem 1rem; border-radius: 8px;
-  color: var(--fg2); text-decoration: none; font-size: .9rem; font-weight: 500; transition: all .15s;
+.sidebar nav a {
+  color: var(--fg2); text-decoration: none; padding: .5rem .75rem;
+  border-radius: var(--radius); font-size: .9rem; transition: .15s;
 }
-.sidebar a:hover { background: var(--bg3); color: var(--fg); }
-.sidebar a.active { background: rgba(168,85,247,.1); color: var(--accent); }
-.sidebar .user-info { padding-top: 1rem; border-top: 1px solid var(--line); margin-top: auto; font-size: .8rem; color: var(--fg3); }
-.sidebar .user-info .name { color: var(--fg); font-weight: 600; }
+.sidebar nav a:hover { background: var(--bg3); color: var(--fg); }
+.sidebar nav a.active { background: var(--purple-dim); color: var(--accent); font-weight: 500; }
+.user-info { padding-top: 1rem; border-top: 1px solid var(--line); }
+.user-info .name { font-size: .8rem; margin-bottom: .25rem; }
 
-.main { flex: 1; padding: 2rem; overflow-y: auto; max-width: 1100px; }
-.page-header { margin-bottom: 2rem; }
-.page-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; }
-.page-header p { color: var(--fg2); font-size: .9rem; }
+.main { flex: 1; padding: 2rem; overflow-x: auto; }
+.page-header { margin-bottom: 1.5rem; }
+.page-header h1 { font-size: 1.5rem; font-weight: 600; }
+.page-header p { color: var(--fg2); font-size: .9rem; margin-top: .2rem; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.stat-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
-.stat-card .label { font-size: .8rem; color: var(--fg2); }
-.stat-card .value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
+.stat-card .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); margin-bottom: .35rem; }
+.stat-card .value { font-size: 1.5rem; font-weight: 600; }
 
-.card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.card-header h3 { font-size: .95rem; font-weight: 600; }
+.card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 1.5rem; }
+.card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1rem 0; }
+.card-header h3 { font-size: 1rem; font-weight: 600; }
+.card table { width: 100%; border-collapse: collapse; margin-top: .75rem; }
+.card th, .card td { text-align: left; padding: .6rem .8rem; font-size: .85rem; border-bottom: 1px solid var(--line); }
+.card th { color: var(--fg3); font-weight: 500; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.card td { font-size: .85rem; }
 
-.btn {
-  display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.25rem; border-radius: 8px;
-  font-weight: 600; font-size: .85rem; cursor: pointer; border: none; text-decoration: none; transition: all .15s;
-}
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #9333ea; }
-.btn-outline { background: transparent; border: 1px solid var(--line); color: var(--fg); }
-.btn-danger { background: var(--red); color: white; }
-.btn-sm { padding: .35rem .75rem; font-size: .8rem; }
-
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: .8rem; font-weight: 600; color: var(--fg3); padding: .75rem .5rem; border-bottom: 1px solid var(--line); }
-td { padding: .75rem .5rem; font-size: .85rem; border-bottom: 1px solid var(--line); }
-.mono { font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
-
-.tag { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 600; }
+.tag { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; vertical-align: middle; }
 .tag-free { background: var(--bg3); color: var(--fg2); }
 .tag-pro { background: var(--purple-dim); color: var(--accent); }
 .tag-enterprise { background: rgba(245,158,11,.15); color: var(--yellow); }
@@ -83,98 +73,95 @@ td { padding: .75rem .5rem; font-size: .85rem; border-bottom: 1px solid var(--li
 .tag-mimo { background: rgba(255,130,0,.15); color: #ff8200; }
 .tag-google { background: rgba(66,133,244,.15); color: #4285f4; }
 
-input, select {
-  width: 100%; padding: .6rem .75rem; background: var(--bg); border: 1px solid var(--line);
-  border-radius: 6px; color: var(--fg); font-size: .9rem; outline: none;
-}
-input:focus { border-color: var(--accent); }
+.btn { display: inline-flex; align-items: center; gap: .35rem; padding: .5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg3); color: var(--fg); cursor: pointer; font-size: .85rem; font-family: inherit; transition: .15s; }
+.btn:hover { background: rgba(255,255,255,.08); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-sm { padding: .3rem .6rem; font-size: .78rem; }
+.btn-danger { background: rgba(239,68,68,.15); border-color: transparent; color: var(--red); }
+.btn-danger:hover { background: rgba(239,68,68,.25); }
+
+input, select { font-family: inherit; }
 .form-group { margin-bottom: 1rem; }
-label { display: block; font-size: .85rem; font-weight: 500; color: var(--fg2); margin-bottom: .35rem; }
+.form-group label { display: block; font-size: .8rem; color: var(--fg2); margin-bottom: .3rem; }
+.form-group input { width: 100%; padding: .6rem; background: var(--bg3); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); font-size: .9rem; }
 
-.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
-.login-box { width: 400px; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 2.5rem; }
-.login-box .term-bar { display: flex; align-items: center; gap: 6px; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
-.login-box .term-dot { width: 10px; height: 10px; border-radius: 50%; }
-.login-box .term-dot:nth-child(1) { background: #ef4444; }
-.login-box .term-dot:nth-child(2) { background: #f59e0b; }
-.login-box .term-dot:nth-child(3) { background: #22c55e; }
-.login-box .term-label { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--fg3); margin-left: .5rem; }
-.login-box .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-align: center; }
-.login-box h2 { text-align: center; font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin: .5rem 0 .25rem; }
-.login-box .sub { text-align: center; color: var(--fg2); font-size: .85rem; margin-bottom: 2rem; }
-.login-box .error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: var(--red); padding: .75rem; border-radius: 6px; font-size: .85rem; margin-bottom: 1rem; display: none; }
-.login-box .error.show { display: block; }
-.login-box .switch { text-align: center; font-size: .85rem; color: var(--fg2); margin-top: 1.5rem; }
-.login-box .switch a { color: var(--accent); text-decoration: none; cursor: pointer; }
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-box { background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; width: 380px; }
+.term-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.term-dot:nth-child(1) { background: #ef4444; } .term-dot:nth-child(2) { background: #f59e0b; } .term-dot:nth-child(3) { background: #22c55e; }
+.term-label { margin-left: auto; font-size: .7rem; color: var(--fg3); font-family: var(--mono); }
+.login-box .logo { font-family: var(--mono); font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: .25rem; }
+.login-box h2 { font-size: 1.2rem; margin-bottom: .15rem; font-weight: 600; }
+.sub { color: var(--fg2); font-size: .85rem; margin-bottom: 1.5rem; }
+.error { color: var(--red); font-size: .85rem; margin-bottom: .75rem; display: none; }
+.switch { margin-top: 1rem; text-align: center; font-size: .85rem; color: var(--fg2); }
+.switch a { color: var(--accent); cursor: pointer; }
 
-.toast { position: fixed; top: 1rem; right: 1rem; padding: .75rem 1.25rem; border-radius: 8px; font-size: .85rem; z-index: 1000; animation: slideIn .3s; max-width: 400px; display: none; }
-.toast-success { background: rgba(34,197,94,.15); border: 1px solid var(--green); color: var(--green); }
-.toast-error { background: rgba(239,68,68,.15); border: 1px solid var(--red); color: var(--red); }
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+#toast { position: fixed; bottom: 1.5rem; right: 1.5rem; padding: .75rem 1.2rem; border-radius: var(--radius); font-size: .85rem; z-index: 100; transition: .3s; opacity: 0; pointer-events: none; }
+#toast.show { opacity: 1; }
 
-.plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-@media (max-width: 768px) { .sidebar { width: auto; padding: 1rem; } .sidebar a span:last-child { display: none; } .sidebar .user-info { display: none; } }
-
-.chart-bars { display: flex; gap: 3px; align-items: flex-end; height: 120px; padding: .5rem 0; }
-.chart-bar { flex: 1; background: linear-gradient(to top, var(--accent), var(--accent2)); border-radius: 3px 3px 0 0; min-height: 2px; opacity: .8; transition: all .2s; cursor: pointer; position: relative; }
-.chart-bar:hover { opacity: 1; transform: scaleY(1.05); transform-origin: bottom; }
+/* Admin tabs */
+.admin-tabs { display: flex; gap: .25rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.admin-tab { padding: .5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg3); color: var(--fg2); cursor: pointer; font-size: .82rem; transition: .15s; }
+.admin-tab:hover { background: var(--purple-dim); color: var(--accent); }
+.admin-tab.active { background: var(--purple-dim); color: var(--accent); border-color: var(--accent); }
+.admin-section { display: none; }
+.admin-section.active { display: block; }
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-const STATE = { user: null, token: localStorage.getItem('clew_session_token') || null, keys: [], models: [], page: 'login' };
-const API_BASE = 'https://api.clew-code.org';
+const STATE = { user: null, token: localStorage.getItem('clew_session_token') || null, keys: [], models: [], page: 'login', adminTab: 'overview' };
 
 async function api(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (STATE.token) headers['Authorization'] = 'Bearer ' + STATE.token;
-  const res = await fetch(API_BASE + path, { ...opts, headers: { ...headers, ...opts.headers } });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+  const res = await fetch('https://api.clew-code.org' + path, { ...opts, headers });
+  if (res.status === 401) { STATE.token = null; localStorage.removeItem('clew_session_token'); render(); }
+  return res.json();
 }
 
-function toast(msg, type) {
+function fmt(n) { if (n === undefined || n === null) return '—'; if (n >= 1e12) return (n/1e12).toFixed(1)+'T'; if (n >= 1e9) return (n/1e9).toFixed(1)+'B'; if (n >= 1e6) return (n/1e6).toFixed(1)+'M'; if (n >= 1e3) return (n/1e3).toFixed(1)+'K'; return n.toLocaleString(); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function toast(msg, type = 'info') {
   const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'toast toast-' + type; el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 3000);
+  if (!el) return;
+  el.textContent = msg; el.style.background = type === 'success' ? 'rgba(34,197,94,.9)' : type === 'error' ? 'rgba(239,68,68,.9)' : 'rgba(26,26,40,.95)'; el.style.color = '#fff'; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-async function render() {
-  const hash = location.hash.slice(1) || 'overview';
+async function init() {
+  if (!STATE.token) { render(); return; }
+  try {
+    const d = await api('/v1/auth/me');
+    if (d.user) { STATE.user = d.user; render(); }
+    else { STATE.token = null; localStorage.removeItem('clew_session_token'); render(); }
+  } catch { STATE.token = null; localStorage.removeItem('clew_session_token'); render(); }
+}
+
+function render() {
+  if (!STATE.token || !STATE.user) { document.getElementById('app').innerHTML = loginPage(); setupAuth(); return; }
+
+  const hash = (location.hash || '#overview').slice(1);
   STATE.page = hash;
-  const app = document.getElementById('app');
-
-  // Try to restore session
-  const t = localStorage.getItem('clew_session_token');
-  if (t && !STATE.user) {
-    STATE.token = t;
-    try {
-      const data = await api('/v1/auth/me');
-      STATE.user = data.user;
-    } catch {
-      STATE.token = null;
-      STATE.user = null;
-      localStorage.removeItem('clew_session_token');
-    }
-  }
-
-  if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
   const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok, models };
   const content = (pages[hash] || overview)();
-  app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
+  document.getElementById('app').innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
-  // Load real data after page render
   if (hash === 'overview') loadOverview();
   if (hash === 'keys') loadKeys();
   if (hash === 'usage') loadUsage();
   if (hash === 'instances') loadInstances();
   if (hash === 'events') loadEvents();
-  if (hash === 'admin') loadAdminStats();
+  if (hash === 'admin') loadAdmin();
   if (hash === 'projects') loadProjects();
   if (hash === 'orgs') loadOrgs();
+  if (hash === 'billing') loadBilling();
   if (hash === 'byok') loadByok();
   if (hash === 'models') loadModels();
 }
@@ -186,7 +173,7 @@ function sidebar() {
     { h: 'models', l: 'Models' }, { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
     { h: 'settings', l: 'Settings' },
   ];
-  const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
+  const adminLinks = (STATE.user?.tier === 'enterprise')
     ? [{ h: 'admin', l: 'Admin' }, { h: 'instances', l: 'Instances' }, { h: 'events', l: 'Events' }]
     : [];
   links.push(...adminLinks);
@@ -194,6 +181,8 @@ function sidebar() {
     links.map(l => '<a href="#' + l.h + '" class="' + (STATE.page === l.h ? 'active' : '') + '">' + l.l + '</a>').join('') +
     '</nav><div class="user-info"><div class="name">' + STATE.user.email + '</div><span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></div></div>';
 }
+
+// ============ LOGIN ============
 
 function loginPage() {
   return '<div class="login-page"><div class="login-box">' +
@@ -208,111 +197,115 @@ function loginPage() {
     '<div class="switch"><span id="auth-switch-text">Don\'t have an account? </span><a id="auth-switch-link">Sign up</a></div></div></div>';
 }
 
-function bindLogin() {
-  let isLogin = true;
-  const toggle = () => {
-    isLogin = !isLogin;
-    document.getElementById('auth-title').textContent = isLogin ? 'Sign in' : 'Create account';
-    document.getElementById('auth-btn').textContent = isLogin ? 'Sign in' : 'Create account';
-    document.getElementById('auth-switch-text').textContent = isLogin ? "Don't have an account? " : "Already have an account? ";
-    document.getElementById('auth-switch-link').textContent = isLogin ? 'Sign up' : 'Sign in';
-    document.getElementById('auth-error').classList.remove('show');
+function setupAuth() {
+  let mode = 'login';
+  const title = document.getElementById('auth-title');
+  const sub = document.getElementById('auth-sub');
+  const btn = document.getElementById('auth-btn');
+  const error = document.getElementById('auth-error');
+  const switchLink = document.getElementById('auth-switch-link');
+  const switchText = document.getElementById('auth-switch-text');
+
+  switchLink.onclick = () => {
+    mode = mode === 'login' ? 'signup' : 'login';
+    title.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+    sub.textContent = mode === 'login' ? 'Access your Clew API dashboard' : 'Start building with Clew API';
+    btn.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+    switchText.textContent = mode === 'login' ? 'Don\'t have an account? ' : 'Already have an account? ';
+    switchLink.textContent = mode === 'login' ? 'Sign up' : 'Sign in';
+    error.style.display = 'none';
   };
-  document.getElementById('auth-switch-link').onclick = toggle;
+
   document.getElementById('auth-form').onsubmit = async () => {
-    const err = document.getElementById('auth-error');
-    err.classList.remove('show');
+    error.style.display = 'none';
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
-    document.getElementById('auth-btn').disabled = true;
+    if (!email || !password) { error.textContent = 'Email and password required'; error.style.display = 'block'; return; }
     try {
-      const endpoint = isLogin ? '/v1/auth/login' : '/v1/auth/signup';
-      const data = await api(endpoint, { method: 'POST', body: JSON.stringify({ email, password }) });
-      STATE.token = data.token;
-      STATE.user = data.user;
-      localStorage.setItem('clew_session_token', data.token);
-      window.location.href = '/app/#overview';
-    } catch (e) { err.textContent = e.message; err.classList.add('show'); }
-    document.getElementById('auth-btn').disabled = false;
+      const d = await api('/v1/auth/' + (mode === 'login' ? 'login' : 'signup'), { method: 'POST', body: JSON.stringify({ email, password }) });
+      if (d.token) {
+        STATE.token = d.token; STATE.user = d.user;
+        localStorage.setItem('clew_session_token', d.token);
+        render();
+      } else { error.textContent = d.error || 'Failed'; error.style.display = 'block'; }
+    } catch (e) { error.textContent = e.message; error.style.display = 'block'; }
   };
 }
 
+// ============ OVERVIEW ============
+
 function overview() {
-  return '<div class="main"><div class="page-header"><h1>Dashboard</h1><p>Clew API overview</p></div>' +
+  return '<div class="main"><div class="page-header"><h1>Dashboard</h1><p>Usage overview</p></div>' +
     '<div class="stats-grid">' +
-    '<div class="stat-card"><div class="label">Requests (30d)</div><div class="value" style="color:var(--accent)" id="stat-requests">—</div></div>' +
-    '<div class="stat-card"><div class="label">Tokens Used</div><div class="value" style="color:var(--accent2)" id="stat-tokens">—</div></div>' +
-    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" style="color:var(--fg)" id="stat-cost">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Tokens</div><div class="value" id="stat-tokens" style="color:var(--accent)">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" id="stat-cost" style="color:var(--yellow)">—</div></div>' +
+    '<div class="stat-card"><div class="label">Requests</div><div class="value" id="stat-requests" style="color:var(--fg)">—</div></div>' +
     '<div class="stat-card"><div class="label">Active Keys</div><div class="value" style="color:var(--fg)" id="stat-keys">—</div></div></div>' +
-    '<div class="card"><div class="card-header"><h3>Usage (Last 30 Days)</h3></div>' +
-    '<div class="chart-bars" id="usage-chart"><div style="padding:1rem;text-align:center;color:var(--fg3)">Loading...</div></div></div></div>';
+    '<div class="card"><div class="card-header"><h3>Daily Usage (7 days)</h3></div>' +
+    '<div id="daily-chart" style="padding: .5rem 1rem 1.5rem;display:flex;align-items:end;gap:.4rem;height:120px"><span style="color:var(--fg3)">Loading...</span></div></div></div>';
 }
 
 async function loadOverview() {
   try {
-    const usage = await api('/v1/usage');
-    const me = await api('/v1/auth/me');
-    const sum = usage.summary || {};
-    document.getElementById('stat-requests').textContent = sum.total_requests || '0';
-    document.getElementById('stat-tokens').textContent = (sum.total_tokens || 0).toLocaleString();
-    document.getElementById('stat-cost').textContent = '$' + (sum.total_cost || 0).toFixed(4);
-    document.getElementById('stat-keys').textContent = me.user?.active_keys || '0';
+    const [u, keys] = await Promise.all([
+      api('/v1/usage'), api('/v1/keys'),
+    ]);
+    const stats = u.stats || u;
+    document.getElementById('stat-tokens').textContent = fmt(stats.total_tokens || stats.total_usage || 0);
+    document.getElementById('stat-cost').textContent = '$' + (stats.total_cost || 0).toFixed(4);
+    document.getElementById('stat-requests').textContent = fmt(stats.total_requests || 0);
+    document.getElementById('stat-keys').textContent = fmt((keys.keys || []).filter((k: any) => k.active).length);
 
-    // Real chart data from daily stats
-    const daily = await api('/v1/usage/daily?days=30');
-    const chart = document.getElementById('usage-chart');
-    const maxTokens = Math.max(...daily.chart.map(d => d.tokens), 1);
-    chart.innerHTML = daily.chart.map(d => {
-      const h = d.tokens > 0 ? Math.max(4, (d.tokens / maxTokens) * 80) : 2;
-      const date = new Date(d.date + 'T00:00:00');
-      const label = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      return '<div class="chart-bar" style="height:' + h + 'px" title="' + label + ': ' + d.tokens.toLocaleString() + ' tokens, ' + d.requests + ' req"></div>';
+    const days = stats.daily || u.daily || [];
+    const chart = document.getElementById('daily-chart');
+    if (!days.length) return;
+    const max = Math.max(...days.map((d: any) => d.tokens || d.total_tokens || 1));
+    chart.innerHTML = days.map((d: any) => {
+      const v = d.tokens || d.total_tokens || 0;
+      const pct = max > 0 ? (v / max * 100) : 0;
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
+        '<div style="width:100%;background:linear-gradient(to top,var(--purple-dim),var(--accent));border-radius:4px 4px 0 0;height:' + pct + '%;min-height:4px;transition:.3s"></div>' +
+        '<span style="font-size:.6rem;color:var(--fg3)">' + (d.day || '').slice(5) + '</span></div>';
     }).join('');
-    // Add total under chart
-    const totalTokens = daily.chart.reduce((s, d) => s + d.tokens, 0);
-    const totalReq = daily.chart.reduce((s, d) => s + d.requests, 0);
-    chart.parentElement.innerHTML += '<div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--fg3);margin-top:.5rem"><span>' + daily.chart[0]?.date?.slice(0,7) + ' — ' + daily.chart[daily.chart.length-1]?.date?.slice(0,10) + '</span><span>' + totalTokens.toLocaleString() + ' tokens total · ' + totalReq + ' requests</span></div>';
-  } catch (e) {
-    document.getElementById('stat-requests').textContent = '?';
-    document.getElementById('stat-tokens').textContent = '?';
-    document.getElementById('stat-cost').textContent = '?';
-    document.getElementById('stat-keys').textContent = '?';
-  }
+  } catch {}
 }
+
+// ============ API KEYS ============
 
 function keys() {
   return '<div class="main"><div class="page-header"><h1>API Keys</h1><p>Manage your API keys</p></div>' +
     '<div class="card"><div class="card-header"><h3>Your Keys</h3><button class="btn btn-primary btn-sm" onclick="createKeyWithCap()">+ New Key</button></div>' +
-    '<table><thead><tr><th>Name</th><th>Key</th><th>Monthly Cap</th><th>Status</th><th>Created</th><th></th></tr></thead>' +
-    '<tbody id="keys-table"><tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">Loading...</td></tr></tbody></table></div></div>';
+    '<table><thead><tr><th>Name</th><th>Key</th><th>Monthly Cap</th><th>Status</th><th>Last Used</th><th>Created</th><th></th></tr></thead>' +
+    '<tbody id="keys-table"><tr><td colspan="7" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
 
 async function loadKeys() {
   try {
-    const data = await api('/v1/keys');
-    STATE.keys = data.keys || [];
+    const d = await api('/v1/keys');
     const tbody = document.getElementById('keys-table');
-    if (!STATE.keys.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">No keys. Create one!</td></tr>'; return; }
-    tbody.innerHTML = STATE.keys.map(k =>
-      '<tr><td>' + k.name + '</td><td class="mono">' + k.key_prefix + '...</td>' +
-      '<td>' + (k.monthly_cap ? k.monthly_cap.toLocaleString() + ' tokens' : '<span style="color:var(--fg3)">Unlimited</span>') + '</td>' +
+    const keys = d.keys || [];
+    if (!keys.length) { tbody.innerHTML = '<tr><td colspan="7" style="color:var(--fg3);text-align:center;padding:1rem">No keys yet</td></tr>'; return; }
+    tbody.innerHTML = keys.map(k =>
+      '<tr><td>' + esc(k.name) + '</td><td style="font-family:var(--mono);font-size:.8rem">' + esc(k.key_prefix) + '...</td>' +
+      '<td>' + (k.monthly_cap ? fmt(k.monthly_cap) : '—') + '</td>' +
       '<td><span class="tag ' + (k.active ? 'tag-active' : 'tag-revoked') + '">' + (k.active ? 'Active' : 'Revoked') + '</span></td>' +
-      '<td class="mono">' + (k.created_at ? new Date(k.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td style="font-size:.8rem;color:var(--fg2)">' + (k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : '—') + '</td>' +
+      '<td style="font-size:.8rem;color:var(--fg2)">' + (k.created_at ? new Date(k.created_at).toLocaleDateString() : '') + '</td>' +
       '<td>' + (k.active ? '<button class="btn btn-danger btn-sm" onclick="revokeKey(\'' + k.id + '\')">Revoke</button>' : '') + '</td></tr>'
     ).join('');
-  } catch (e) { document.getElementById('keys-table').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red)">Failed to load keys</td></tr>'; }
+  } catch {}
 }
 
 async function createKeyWithCap() {
-  const name = prompt('Name for this key:');
-  if (!name) return;
+  const name = prompt('Key name:') || 'default';
   const cap = prompt('Monthly token cap (leave empty for unlimited):');
-  const monthlyCap = cap ? parseInt(cap, 10) : null;
-  if (cap && (isNaN(monthlyCap) || monthlyCap <= 0)) { toast('Invalid cap', 'error'); return; }
+  const monthly_cap = cap ? parseInt(cap) : undefined;
   try {
-    const d = await api('/v1/keys', { method: 'POST', body: JSON.stringify({ name, monthly_cap: monthlyCap || undefined }) });
-    toast('Key created: ' + d.key, 'success');
-    loadKeys();
+    const d = await api('/v1/keys', { method: 'POST', body: JSON.stringify({ name, monthly_cap }) });
+    if (d.key) {
+      toast('Copy your key: ' + d.key, 'success');
+      loadKeys();
+    } else toast(d.error || 'Failed', 'error');
   } catch (e) { toast(e.message, 'error'); }
 }
 
@@ -349,7 +342,7 @@ async function loadByok() {
       '<td>' + (k.created_at || '').slice(0, 10) + '</td>' +
       '<td><button class="btn btn-danger btn-sm" onclick="deleteByokKey(\'' + k.id + '\')">Remove</button></td></tr>'
     ).join('');
-  } catch { document.getElementById('byok-table').innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">Failed to load</td></tr>'; }
+  } catch {}
 }
 
 async function addByokKey() {
@@ -388,21 +381,16 @@ async function loadModels() {
     const d = await api('/v1/models');
     STATE.models = d.data || d.models || [];
     const models = STATE.models;
-
-    // Populate provider filter
     const providers = [...new Set(models.map(m => m.provider))].sort();
     const sel = document.getElementById('model-provider-filter');
     if (sel) {
       sel.innerHTML = '<option value="">All Providers</option>' +
         providers.map(p => '<option value="' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>').join('');
     }
-
-    // Update header count
     const header = document.querySelector('.card-header h3');
     if (header) header.textContent = 'All Models (' + models.length + ')';
-
     filterModels();
-  } catch { document.getElementById('models-table').innerHTML = '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">Failed to load models</td></tr>'; }
+  } catch {}
 }
 
 function filterModels() {
@@ -427,227 +415,117 @@ function filterModels() {
   ).join('');
 }
 
+// ============ USAGE ============
+
 function usage() {
   return '<div class="main"><div class="page-header"><h1>Usage</h1><p>Token usage and costs by provider</p></div>' +
     '<div class="stats-grid"><div class="stat-card"><div class="label">Prompt Tokens</div><div class="value" id="usage-pt">—</div></div>' +
     '<div class="stat-card"><div class="label">Completion Tokens</div><div class="value" id="usage-ct">—</div></div>' +
-    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" id="usage-cost">—</div></div></div>' +
-    '<div class="card"><h3>By Provider</h3><table><thead><tr><th>Provider</th><th>Tokens</th><th>Cost</th></tr></thead>' +
-    '<tbody id="usage-providers"><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" id="usage-cost">—</div></div>' +
+    '<div class="stat-card"><div class="label">Requests</div><div class="value" id="usage-req">—</div></div></div>' +
+    '<div class="card"><div class="card-header"><h3>Usage by Provider</h3></div>' +
+    '<table><thead><tr><th>Provider</th><th>Requests</th><th>Prompt Tokens</th><th>Completion Tokens</th><th>Cost</th></tr></thead>' +
+    '<tbody id="usage-by-provider"><tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div>' +
+    '<div class="card"><div class="card-header"><h3>Daily Usage (7 days)</h3></div>' +
+    '<div id="usage-chart" style="padding: .5rem 1rem 1.5rem;display:flex;align-items:end;gap:.4rem;height:100px"><span style="color:var(--fg3)">Loading...</span></div></div></div>';
 }
 
 async function loadUsage() {
   try {
-    const data = await api('/v1/usage');
-    const sum = data.summary || {};
-    document.getElementById('usage-pt').textContent = (sum.total_prompt_tokens || 0).toLocaleString();
-    document.getElementById('usage-ct').textContent = (sum.total_completion_tokens || 0).toLocaleString();
-    document.getElementById('usage-cost').textContent = '$' + (sum.total_cost || 0).toFixed(4);
+    const d = await api('/v1/usage');
+    const stats = d.stats || d;
+    document.getElementById('usage-pt').textContent = fmt(stats.total_prompt_tokens || 0);
+    document.getElementById('usage-ct').textContent = fmt(stats.total_completion_tokens || 0);
+    document.getElementById('usage-cost').textContent = '$' + (stats.total_cost || 0).toFixed(4);
+    document.getElementById('usage-req').textContent = fmt(stats.total_requests || 0);
 
-    const tbody = document.getElementById('usage-providers');
-    const providers = data.by_provider || [];
-    if (!providers.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">No data yet</td></tr>';
-      return;
-    }
-    tbody.innerHTML = providers.map((p: any) =>
-      '<tr><td>' + p.provider + '</td><td>' + ((p.total_prompt_tokens || 0) + (p.total_completion_tokens || 0)).toLocaleString() + '</td>' +
-      '<td>$' + (p.total_cost || 0).toFixed(4) + '</td></tr>'
-    ).join('');
-  } catch (e) {
-    document.getElementById('usage-pt').textContent = '?';
-    document.getElementById('usage-ct').textContent = '?';
-    document.getElementById('usage-cost').textContent = '?';
-  }
+    const byProvider = stats.by_provider || d.by_provider || [];
+    const pt = document.getElementById('usage-by-provider');
+    pt.innerHTML = byProvider.length ? byProvider.map((p: any) =>
+      '<tr><td><span class="tag tag-' + p.provider + '">' + p.provider + '</span></td>' +
+      '<td>' + fmt(p.requests || 0) + '</td>' +
+      '<td>' + fmt(p.prompt_tokens || 0) + '</td>' +
+      '<td>' + fmt(p.completion_tokens || 0) + '</td>' +
+      '<td>$' + (p.cost || 0).toFixed(4) + '</td></tr>'
+    ).join('') : '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">No usage yet</td></tr>';
+
+    const days = stats.daily || d.daily || [];
+    const chart = document.getElementById('usage-chart');
+    if (!days.length) return;
+    const max = Math.max(...days.map((d: any) => d.tokens || d.total_tokens || 1));
+    chart.innerHTML = days.map((d: any) => {
+      const v = d.tokens || d.total_tokens || 0;
+      const pct = max > 0 ? (v / max * 100) : 0;
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
+        '<div style="width:100%;background:linear-gradient(to top,var(--purple-dim),var(--accent));border-radius:4px 4px 0 0;height:' + pct + '%;min-height:4px"></div>' +
+        '<span style="font-size:.6rem;color:var(--fg3)">' + (d.day || '').slice(5) + '</span></div>';
+    }).join('');
+  } catch {}
 }
+
+// ============ BILLING ============
 
 function billing() {
-  const tiers = ['free', 'pro', 'enterprise'];
-  const prices = ['$0', '$10/mo', '$100/mo'];
-  const limits = ['100K tokens', '5M tokens', 'Unlimited'];
-  const cls = ['tag-free', 'tag-pro', 'tag-enterprise'];
-  return '<div class="main"><div class="page-header"><h1>Billing</h1><p>Manage subscription</p></div>' +
-    '<div class="plans-grid">' + tiers.map((t, i) =>
-      '<div class="card" style="' + (STATE.user.tier === t ? 'border-color:var(--accent)' : '') + '">' +
-      '<h3>' + t.charAt(0).toUpperCase() + t.slice(1) + '</h3>' +
-      '<div style="font-size:2rem;font-weight:700;font-family:JetBrains Mono">' + prices[i] + '</div>' +
-      '<p style="color:var(--fg2);margin:.5rem 0">' + limits[i] + '/month</p>' +
-      (STATE.user.tier === t ? '<span class="tag ' + cls[i] + '">Current</span>' :
-        '<button class="btn btn-primary btn-sm" onclick="upgrade(\'' + t + '\')">' + (t === 'free' ? 'Downgrade' : 'Upgrade') + '</button>') +
-      '</div>'
-    ).join('') + '</div><div class="card"><h3>Billing History</h3><p style="color:var(--fg2);font-size:.85rem">No invoices yet</p></div></div>';
+  return '<div class="main"><div class="page-header"><h1>Billing</h1><p>Upgrade your plan or view invoices</p></div>' +
+    '<div class="card"><div class="card-header"><h3>Current Plan</h3></div>' +
+    '<div style="padding:1rem"><p>Tier: <strong>' + STATE.user.tier.toUpperCase() + '</strong></p>' +
+    (STATE.user.tier === 'free' ? '<button class="btn btn-primary" style="margin-top:.5rem" onclick="checkout()">Upgrade to Pro</button>' : '') +
+    '</div></div>' +
+    '<div class="card"><div class="card-header"><h3>Invoices</h3></div>' +
+    '<table><thead><tr><th>Month</th><th>Requests</th><th>Tokens</th><th>Cost</th></tr></thead>' +
+    '<tbody id="invoice-table"><tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
 
-async function upgrade(tier) {
-  try { const d = await api('/v1/billing/checkout', { method: 'POST', body: JSON.stringify({ tier }) }); toast(d.message || 'Upgraded', 'success'); }
-  catch (e) { toast(e.message, 'error'); }
+async function loadBilling() {
+  try {
+    const d = await api('/v1/billing/invoices');
+    const tbody = document.getElementById('invoice-table');
+    const inv = d.invoices || [];
+    if (!inv.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">No invoices yet</td></tr>'; return; }
+    tbody.innerHTML = inv.map((i: any) =>
+      '<tr><td>' + i.month + '</td><td>' + fmt(i.requests) + '</td><td>' + fmt(i.tokens) + '</td><td>$' + (i.cost || 0).toFixed(4) + '</td></tr>'
+    ).join('');
+  } catch {}
 }
+
+async function checkout() {
+  try {
+    const d = await api('/v1/billing/checkout', { method: 'POST', body: JSON.stringify({ tier: 'pro' }) });
+    if (d.url) window.location.href = d.url;
+    else toast(d.error || 'Billing not configured', 'error');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ SETTINGS ============
 
 function settings() {
   return '<div class="main"><div class="page-header"><h1>Settings</h1><p>Account settings</p></div>' +
-    '<div class="card"><div class="form-group"><label>Email</label><input value="' + STATE.user.email + '" disabled></div>' +
-    '<div class="form-group"><label>API Token</label><input value="' + STATE.token + '" readonly onclick="this.select()"></div></div>' +
-    '<button class="btn btn-danger" onclick="logout()">Sign Out</button></div>';
+    '<div class="card"><div class="card-header"><h3>Account</h3></div><div style="padding:1rem"><p>Email: <strong>' + esc(STATE.user.email) + '</strong></p><p>Tier: <span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></p>' +
+    '<button class="btn btn-sm" style="margin-top:.5rem" onclick="logout()">Sign Out</button></div></div></div>';
 }
 
-function projects() {
-  return '<div class="main"><div class="page-header"><h1>Projects</h1><p>Organize API keys into projects</p></div>' +
-    '<button class="btn btn-primary btn-sm" onclick="createProject()" style="margin-bottom:1rem">+ New Project</button>' +
-    '<div class="card"><table><thead><tr><th>Name</th><th>Description</th><th>Keys</th><th>Monthly Tokens</th><th>Created</th><th></th></tr></thead>' +
-    '<tbody id="projects-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+function logout() {
+  STATE.token = null; STATE.user = null;
+  localStorage.removeItem('clew_session_token');
+  render();
 }
 
-async function loadProjects() {
-  try {
-    const data = await api('/v1/projects');
-    const tbody = document.getElementById('projects-table');
-    const list = data.projects || [];
-    if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">No projects. Create one!</td></tr>'; return; }
-    tbody.innerHTML = list.map(p =>
-      '<tr><td><strong>' + esc(p.name) + '</strong></td><td style="color:var(--fg2)">' + esc(p.description || '—') + '</td>' +
-      '<td>' + p.key_count + '</td><td>' + (p.monthly_tokens || 0).toLocaleString() + '</td>' +
-      '<td style="color:var(--fg2)">' + (p.created_at ? new Date(p.created_at).toLocaleDateString() : '') + '</td>' +
-      '<td><button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.id + '\')">Delete</button></td></tr>'
-    ).join('');
-  } catch { document.getElementById('projects-table').innerHTML = '<tr><td colspan="6" style="color:var(--red);text-align:center">Failed</td></tr>'; }
-}
-
-async function createProject() {
-  const name = prompt('Project name:');
-  if (!name) return;
-  const desc = prompt('Description (optional):') || '';
-  try {
-    await api('/v1/projects', { method: 'POST', body: JSON.stringify({ name, description: desc }) });
-    toast('Project created', 'success');
-    loadProjects();
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-async function deleteProject(id) {
-  if (!confirm('Delete this project? Keys will be unlinked but not revoked.')) return;
-  try {
-    await api('/v1/projects/' + id, { method: 'DELETE' });
-    toast('Deleted', 'success');
-    loadProjects();
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-function orgs() {
-  return '<div class="main"><div class="page-header"><h1>Organizations</h1><p>Multi-tenant team management</p></div>' +
-    '<button class="btn btn-primary btn-sm" onclick="createOrg()" style="margin-bottom:1rem">+ New Organization</button>' +
-    '<div class="card" id="orgs-container"><div id="orgs-list" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</div></div>' +
-    '<div id="org-detail" style="display:none"></div></div>';
-}
-
-async function loadOrgs() {
-  try {
-    const data = await api('/v1/orgs');
-    const owned = data.owned || [];
-    const member = data.member || [];
-    const el = document.getElementById('orgs-list');
-    if (!owned.length && !member.length) {
-      el.innerHTML = 'No organizations. Create one to get started.';
-      return;
-    }
-    el.innerHTML = '';
-    if (owned.length) {
-      el.innerHTML += '<h3 style="margin:.5rem 0;color:var(--fg2);font-size:.85rem">OWNED</h3>';
-      owned.forEach(o => {
-        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line);cursor:pointer" onclick="showOrg(\'' + o.id + '\')">' +
-          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + new Date(o.created_at).toLocaleDateString() + '</span></div>' +
-          '<div><span class="tag tag-enterprise">Owner</span></div></div>';
-      });
-    }
-    if (member.length) {
-      el.innerHTML += '<h3 style="margin:.5rem 0;margin-top:1rem;color:var(--fg2);font-size:.85rem">MEMBER</h3>';
-      member.forEach(o => {
-        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line);cursor:pointer" onclick="showOrg(\'' + o.id + '\')">' +
-          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + new Date(o.created_at).toLocaleDateString() + ' · Role: ' + o.role + '</span></div>' +
-          '<div><span class="tag tag-' + (o.role === 'admin' ? 'pro' : 'free') + '">' + o.role.toUpperCase() + '</span></div></div>';
-      });
-    }
-  } catch { document.getElementById('orgs-list').textContent = 'Failed to load'; }
-}
-
-async function createOrg() {
-  const name = prompt('Organization name:');
-  if (!name) return;
-  try {
-    await api('/v1/orgs', { method: 'POST', body: JSON.stringify({ name }) });
-    toast('Organization created', 'success');
-    loadOrgs();
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-let selectedOrgId = null;
-
-async function showOrg(orgId) {
-  selectedOrgId = orgId;
-  try {
-    const orgData = await api('/v1/orgs/' + orgId);
-    const membersData = await api('/v1/orgs/' + orgId + '/members');
-    const org = orgData.org;
-    const members = membersData.members || [];
-    const isOwner = org.my_role === 'owner' || org.my_role === 'admin';
-    const el = document.getElementById('org-detail');
-    el.style.display = 'block';
-    el.innerHTML =
-      '<div class="card" style="margin-top:1rem">' +
-      '<div class="card-header"><h3>' + esc(org.name) + '</h3>' +
-      (org.my_role === 'owner' ? '<button class="btn btn-danger btn-sm" onclick="deleteOrgConfirm()">Delete Org</button>' : '') +
-      '</div>' +
-      '<p style="color:var(--fg2);font-size:.85rem">ID: ' + esc(org.id) + ' · Members: ' + org.member_count + ' · Your role: <span class="tag tag-enterprise">' + org.my_role.toUpperCase() + '</span></p>' +
-      (isOwner ? '<button class="btn btn-primary btn-sm" onclick="inviteMember()" style="margin:1rem 0">+ Invite Member</button>' : '') +
-      '<table><thead><tr><th>Email</th><th>Role</th><th>Joined</th>' + (org.my_role === 'owner' ? '<th></th>' : '') + '</tr></thead><tbody>' +
-      members.map(m =>
-        '<tr><td>' + esc(m.email) + '</td>' +
-        '<td><span class="tag tag-' + (m.role === 'owner' ? 'enterprise' : m.role === 'admin' ? 'pro' : 'free') + '">' + m.role.toUpperCase() + '</span></td>' +
-        '<td style="color:var(--fg2)">' + (m.created_at ? new Date(m.created_at).toLocaleDateString() : '') + '</td>' +
-        (org.my_role === 'owner' && m.role !== 'owner' ? '<td><button class="btn btn-danger btn-sm" onclick="removeMember(\'' + m.user_id + '\')">Remove</button></td>' : '') +
-        '</tr>'
-      ).join('') +
-      '</tbody></table></div>';
-    // Scroll to detail
-    el.scrollIntoView({ behavior: 'smooth' });
-  } catch { toast('Failed to load org details', 'error'); }
-}
-
-async function inviteMember() {
-  const email = prompt('Email of user to invite:');
-  if (!email) return;
-  const roleInput = prompt('Role (admin / member / viewer):', 'member') || 'member';
-  const r = roleInput.trim().toLowerCase();
-  if (!['admin', 'member', 'viewer'].includes(r)) { toast('Invalid role — use: admin, member, or viewer', 'error'); return; }
-  try {
-    await api('/v1/orgs/' + selectedOrgId + '/members', { method: 'POST', body: JSON.stringify({ email, invite_role: r }) });
-    toast('Invited ' + email + ' as ' + r, 'success');
-    showOrg(selectedOrgId);
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-async function removeMember(userId) {
-  if (!confirm('Remove this member?')) return;
-  try {
-    await api('/v1/orgs/' + selectedOrgId + '/members/' + userId, { method: 'DELETE' });
-    toast('Removed', 'success');
-    showOrg(selectedOrgId);
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-async function deleteOrgConfirm() {
-  if (!confirm('Delete this organization? All members will be removed.')) return;
-  try {
-    await api('/v1/orgs/' + selectedOrgId, { method: 'DELETE' });
-    toast('Deleted', 'success');
-    selectedOrgId = null;
-    document.getElementById('org-detail').style.display = 'none';
-    loadOrgs();
-  } catch (e) { toast(e.message, 'error'); }
-}
+// ============ ADMIN ============
 
 function admin() {
   if (STATE.user?.tier !== 'enterprise') return '<div class="main"><h1>Access Denied</h1></div>';
+  const tabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'poolkeys', label: 'Pool Keys' },
+    { id: 'usage', label: 'Usage Stats' },
+    { id: 'byok', label: 'User BYOK' },
+    { id: 'config', label: 'System Config' },
+  ];
   return '<div class="main"><div class="page-header"><h1>Admin</h1><p>System management</p></div>' +
+    '<div class="admin-tabs">' + tabs.map(t => '<div class="admin-tab' + (STATE.adminTab === t.id ? ' active' : '') + '" onclick="switchAdminTab(\'' + t.id + '\')">' + t.label + '</div>').join('') + '</div>' +
+
+    // Tab: Overview
+    '<div class="admin-section' + (STATE.adminTab === 'overview' ? ' active' : '') + '" id="admin-overview">' +
     '<div class="stats-grid"><div class="stat-card"><div class="label">Active (24h)</div><div class="value" id="admin-active" style="color:var(--accent)">—</div></div>' +
     '<div class="stat-card"><div class="label">Users</div><div class="value" id="admin-users" style="color:var(--accent2)">—</div></div>' +
     '<div class="stat-card"><div class="label">Total Events</div><div class="value" id="admin-events" style="color:var(--fg)">—</div></div></div>' +
@@ -656,11 +534,52 @@ function admin() {
     '<div class="card"><div class="card-header"><h3>Users</h3></div>' +
     '<table><thead><tr><th>Email</th><th>Tier</th><th>Tokens</th><th>Keys</th><th>Created</th><th></th></tr></thead><tbody id="admin-users-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div>' +
     '<div class="card"><div class="card-header"><h3>Version Distribution</h3></div>' +
-    '<table><thead><tr><th>Version</th><th>Instances</th></tr></thead><tbody id="admin-versions"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+    '<table><thead><tr><th>Version</th><th>Instances</th></tr></thead><tbody id="admin-versions"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>' +
+
+    // Tab: Pool Keys
+    '<div class="admin-section' + (STATE.adminTab === 'poolkeys' ? ' active' : '') + '" id="admin-poolkeys">' +
+    '<div class="card"><div class="card-header"><h3>Pool Keys</h3><div style="display:flex;gap:.4rem">' +
+    '<select id="pool-provider" style="padding:.3rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius);font-size:.82rem">' +
+    ALL_PROVIDERS.map(p => '<option value="' + p + '">' + p + '</option>').join('') + '</select>' +
+    '<input id="pool-key-input" type="password" placeholder="sk-..." style="width:300px;padding:.3rem .5rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius);font-size:.82rem">' +
+    '<button class="btn btn-primary btn-sm" onclick="addPoolKey()">+ Add</button></div></div>' +
+    '<table><thead><tr><th>Provider</th><th>Pool Size</th><th>Actions</th></tr></thead><tbody id="pool-table"><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>' +
+
+    // Tab: Usage Stats
+    '<div class="admin-section' + (STATE.adminTab === 'usage' ? ' active' : '') + '" id="admin-usage">' +
+    '<div class="card"><div class="card-header"><h3>Usage by Provider (30 days)</h3></div>' +
+    '<table><thead><tr><th>Provider</th><th>Requests</th><th>Prompt T.</th><th>Completion T.</th><th>Cost</th><th>Users</th></tr></thead>' +
+    '<tbody id="admin-usage-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div>' +
+    '<div class="card"><div class="card-header"><h3>Daily Breakdown (7 days)</h3></div>' +
+    '<div id="admin-usage-chart" style="padding:.5rem 1rem 1.5rem;display:flex;align-items:end;gap:.4rem;height:100px"><span style="color:var(--fg3)">Loading...</span></div></div></div>' +
+
+    // Tab: BYOK
+    '<div class="admin-section' + (STATE.adminTab === 'byok' ? ' active' : '') + '" id="admin-byok">' +
+    '<div class="card"><div class="card-header"><h3>User BYOK Keys</h3></div>' +
+    '<table><thead><tr><th>User</th><th>Provider</th><th>Key Prefix</th><th>Added</th><th></th></tr></thead>' +
+    '<tbody id="admin-byok-table"><tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>' +
+
+    // Tab: System Config
+    '<div class="admin-section' + (STATE.adminTab === 'config' ? ' active' : '') + '" id="admin-config">' +
+    '<div class="card"><div class="card-header"><h3>System Configuration</h3></div>' +
+    '<table><thead><tr><th>Key</th><th>Value</th><th></th></tr></thead>' +
+    '<tbody id="admin-config-table"><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>' +
+    '</div>';
 }
 
-async function loadAdminStats() {
+const ALL_PROVIDERS = ['openai', 'deepseek', 'groq', 'mistral', 'nvidia', 'openrouter', 'opencode', 'minimax', 'mimo'];
+
+function switchAdminTab(tab) {
+  STATE.adminTab = tab;
+  const hash = location.hash || '#admin';
+  location.hash = hash;
+  // Re-render just the admin area
+  loadAdmin();
+}
+
+async function loadAdmin() {
   try {
+    // Overview tab
     const [s, u, pk] = await Promise.all([
       api('/v1/telemetry/stats'),
       api('/v1/admin/users'),
@@ -670,16 +589,14 @@ async function loadAdminStats() {
     document.getElementById('admin-users').textContent = fmt((u.users || []).length);
     document.getElementById('admin-events').textContent = fmt(s.total_events);
 
-    // Provider keys
     const pt = document.getElementById('admin-providers');
     const providers = pk.providers || {};
-    pt.innerHTML = Object.entries(providers).map(([name, set]) =>
+    pt.innerHTML = Object.entries(providers).map(([name, info]: any) =>
       '<tr><td style="font-weight:600">' + name + '</td>' +
-      '<td><span class="tag ' + (set ? 'tag-active' : 'tag-revoked') + '">' + (set ? 'Set' : 'Not set') + '</span></td>' +
-      '<td>' + (set ? '' : '<button class="btn btn-primary btn-sm" onclick="setProviderKey(\'' + name + '\')">Set Key</button>') + '</td></tr>'
+      '<td><span class="tag ' + (info.set ? 'tag-active' : 'tag-revoked') + '">' + (info.set ? (info.poolSize > 0 ? info.poolSize + ' keys' : 'Set') : 'Not set') + '</span></td>' +
+      '<td>' + (info.set ? '<button class="btn btn-sm" onclick="switchAdminTab(\'poolkeys\')">Manage</button>' : '<button class="btn btn-primary btn-sm" onclick="switchAdminTab(\'poolkeys\')">Add Key</button>') + '</td></tr>'
     ).join('');
 
-    // Users table
     const ut = document.getElementById('admin-users-table');
     const users = u.users || [];
     ut.innerHTML = users.map(u2 =>
@@ -687,15 +604,145 @@ async function loadAdminStats() {
       '<td><span class="tag tag-' + u2.tier + '">' + u2.tier.toUpperCase() + '</span></td>' +
       '<td>' + fmt(u2.total_tokens_used || 0) + '</td>' +
       '<td>' + (u2.key_count || 0) + '</td>' +
-      '<td style="color:var(--fg2);font-size:.8rem">' + (u2.created_at ? new Date(u2.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td style="font-size:.8rem;color:var(--fg2)">' + (u2.created_at ? new Date(u2.created_at).toLocaleDateString() : '') + '</td>' +
       '<td>' + (u2.tier !== 'enterprise' ? '<button class="btn btn-sm" onclick="upgradeUser(\'' + u2.id + '\',\'' + u2.tier + '\')">Upgrade</button>' : '') + '</td></tr>'
     ).join('');
 
-    // Versions
     const vt = document.getElementById('admin-versions');
     const versions = s.version_distribution || [];
-    vt.innerHTML = versions.length ? versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
+    vt.innerHTML = versions.length ? versions.map((v: any) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
+
+    // Load tab-specific data
+    if (STATE.adminTab === 'poolkeys') loadPoolKeys();
+    if (STATE.adminTab === 'usage') loadAdminUsage();
+    if (STATE.adminTab === 'byok') loadAdminByok();
+    if (STATE.adminTab === 'config') loadAdminConfig();
+
   } catch {}
+}
+
+// ============ ADMIN: POOL KEYS ============
+
+async function loadPoolKeys() {
+  try {
+    const pk = await api('/v1/admin/provider-keys');
+    const providers = pk.providers || {};
+    const tbody = document.getElementById('pool-table');
+    tbody.innerHTML = Object.entries(providers).map(([name, info]: any) =>
+      '<tr><td style="font-weight:600">' + name + '</td>' +
+      '<td>' + (info.poolSize || 0) + ' keys</td>' +
+      '<td>' +
+      '<button class="btn btn-sm" onclick="viewPoolKeys(\'' + name + '\')" style="margin-right:.3rem">View</button>' +
+      '<button class="btn btn-danger btn-sm" onclick="clearPoolKeys(\'' + name + '\')">Clear</button></td></tr>'
+    ).join('');
+  } catch {}
+}
+
+async function viewPoolKeys(provider) {
+  try {
+    const d = await api('/v1/admin/pool-keys/' + provider);
+    const keys = d.keys || [];
+    const msg = keys.map((k: any, i: number) => (i + 1) + '. ' + k.prefix).join('\n');
+    alert('Pool keys for ' + provider + ' (' + keys.length + '):\n\n' + msg);
+  } catch (e) { toast('Failed to load', 'error'); }
+}
+
+async function addPoolKey() {
+  const provider = document.getElementById('pool-provider').value;
+  const key = document.getElementById('pool-key-input').value;
+  if (!key) { toast('Enter a key', 'error'); return; }
+  try {
+    const d = await api('/v1/admin/provider-keys', { method: 'POST', body: JSON.stringify({ provider, key }) });
+    if (d.ok) { toast('Key added! Pool: ' + d.poolSize, 'success'); document.getElementById('pool-key-input').value = ''; loadPoolKeys(); }
+    else toast(d.error || 'Failed', 'error');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function clearPoolKeys(provider) {
+  if (!confirm('Delete ALL pool keys for ' + provider + '?')) return;
+  try {
+    await api('/v1/admin/pool-keys/' + provider, { method: 'DELETE' });
+    toast('Pool cleared', 'success');
+    loadPoolKeys();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ ADMIN: USAGE ============
+
+async function loadAdminUsage() {
+  try {
+    const d = await api('/v1/admin/usage');
+    const byProvider = d.byProvider || [];
+
+    const tbody = document.getElementById('admin-usage-table');
+    tbody.innerHTML = byProvider.length ? byProvider.map((p: any) =>
+      '<tr><td><span class="tag tag-' + p.provider + '">' + p.provider + '</span></td>' +
+      '<td>' + fmt(p.requests || 0) + '</td>' +
+      '<td>' + fmt(p.pt || 0) + '</td>' +
+      '<td>' + fmt(p.ct || 0) + '</td>' +
+      '<td>$' + (p.cost || 0).toFixed(4) + '</td>' +
+      '<td>' + (p.users || 0) + '</td></tr>'
+    ).join('') : '<tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">No usage data</td></tr>';
+
+    const daily = d.daily || [];
+    const chart = document.getElementById('admin-usage-chart');
+    if (!daily.length) { chart.innerHTML = '<span style="color:var(--fg3)">No data</span>'; return; }
+    const max = Math.max(...daily.map((d: any) => d.tokens || 1));
+    chart.innerHTML = daily.map((d: any) => {
+      const v = d.tokens || 0;
+      const pct = max > 0 ? (v / max * 100) : 0;
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px" title="' + d.provider + ' ' + d.day + ': ' + fmt(v) + '">' +
+        '<div style="width:100%;background:linear-gradient(to top,var(--purple-dim),var(--accent));border-radius:4px 4px 0 0;height:' + pct + '%;min-height:4px"></div>' +
+        '<span style="font-size:.55rem;color:var(--fg3)">' + (d.day || '').slice(5) + '</span></div>';
+    }).join('');
+  } catch {}
+}
+
+// ============ ADMIN: BYOK ============
+
+async function loadAdminByok() {
+  try {
+    const d = await api('/v1/admin/byok');
+    const tbody = document.getElementById('admin-byok-table');
+    const keys = d.keys || [];
+    if (!keys.length) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">No BYOK keys</td></tr>'; return; }
+    tbody.innerHTML = keys.map((k: any) =>
+      '<tr><td>' + esc(k.email) + '</td>' +
+      '<td><span class="tag tag-' + k.provider + '">' + k.provider + '</span></td>' +
+      '<td style="font-family:var(--mono);font-size:.8rem">' + k.key_prefix + '...</td>' +
+      '<td>' + (k.created_at || '').slice(0, 10) + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="deleteAdminByok(\'' + k.id + '\')">Remove</button></td></tr>'
+    ).join('');
+  } catch {}
+}
+
+async function deleteAdminByok(id) {
+  if (!confirm('Remove this BYOK key?')) return;
+  try { await api('/v1/admin/byok/' + id, { method: 'DELETE' }); toast('Removed', 'success'); loadAdminByok(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ ADMIN: CONFIG ============
+
+async function loadAdminConfig() {
+  try {
+    const d = await api('/v1/admin/config');
+    const config = d.config || {};
+    const tbody = document.getElementById('admin-config-table');
+    tbody.innerHTML = Object.entries(config).map(([key, val]) =>
+      '<tr><td style="font-family:var(--mono);font-size:.82rem">' + key + '</td>' +
+      '<td><input id="cfg-' + key + '" value="' + esc(String(val)) + '" style="width:100%;padding:.3rem .5rem;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:var(--radius);font-family:var(--mono);font-size:.82rem"></td>' +
+      '<td><button class="btn btn-sm" onclick="saveConfig(\'' + key + '\')">Save</button></td></tr>'
+    ).join('');
+  } catch {}
+}
+
+async function saveConfig(key) {
+  const value = document.getElementById('cfg-' + key)?.value || '';
+  try {
+    await api('/v1/admin/config', { method: 'POST', body: JSON.stringify({ key, value }) });
+    toast('Saved', 'success');
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 async function setProviderKey(provider) {
@@ -704,7 +751,7 @@ async function setProviderKey(provider) {
   try {
     await api('/v1/admin/provider-keys', { method: 'POST', body: JSON.stringify({ provider, key }) });
     toast(provider + ' key set!', 'success');
-    loadAdminStats();
+    loadAdmin();
   } catch (e) { toast(e.message, 'error'); }
 }
 
@@ -717,9 +764,11 @@ async function upgradeUser(userId, currentTier) {
   try {
     await api('/v1/admin/users/' + userId, { method: 'PATCH', body: JSON.stringify({ tier: newTier }) });
     toast('Upgraded to ' + newTier, 'success');
-    loadAdminStats();
+    loadAdmin();
   } catch (e) { toast(e.message, 'error'); }
 }
+
+// ============ INSTANCES ============
 
 function instances() {
   return '<div class="main"><div class="page-header"><h1>Instances</h1><p>Active Clew Code clients</p></div>' +
@@ -732,13 +781,12 @@ async function loadInstances() {
     const s = await api('/v1/telemetry/stats');
     const versions = s.version_distribution || [];
     const tbody = document.getElementById('instances-table');
-    if (!versions.length) { tbody.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>'; return; }
-    tbody.innerHTML = versions.map(v => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('');
-  } catch { document.getElementById('instances-table').innerHTML = '<tr><td colspan="2" style="color:var(--red);text-align:center">Failed</td></tr>'; }
+    tbody.innerHTML = versions.length ? versions.map((v: any) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
+  } catch {}
 }
 
 function events() {
-  return '<div class="main"><div class="page-header"><h1>Events</h1><p>Telemetry events (7 days)</p></div>' +
+  return '<div class="main"><div class="page-header"><h1>Events</h1><p>Telemetry events log</p></div>' +
     '<div class="card"><table><thead><tr><th>Event</th><th>Count</th></tr></thead>' +
     '<tbody id="events-table"><tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
@@ -746,23 +794,94 @@ function events() {
 async function loadEvents() {
   try {
     const s = await api('/v1/telemetry/stats');
-    const rows = s.top_events_7d || [];
+    const events = s.event_counts || [];
     const tbody = document.getElementById('events-table');
-    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No events</td></tr>'; return; }
-    tbody.innerHTML = rows.map(e => '<tr><td>' + esc(e.event) + '</td><td>' + fmt(e.count) + '</td></tr>').join('');
-  } catch { document.getElementById('events-table').innerHTML = '<tr><td colspan="2" style="color:var(--red);text-align:center">Failed</td></tr>'; }
+    tbody.innerHTML = events.length ? events.map((e: any) => '<tr><td>' + esc(e.event) + '</td><td>' + fmt(e.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No events</td></tr>';
+  } catch {}
 }
 
-function fmt(n) { return Number(n || 0).toLocaleString(); }
-function esc(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
+// ============ PROJECTS ============
 
-function logout() {
-  STATE.token = null; STATE.user = null; localStorage.removeItem('clew_session_token');
-  location.hash = 'login'; render();
+function projects() {
+  return '<div class="main"><div class="page-header"><h1>Projects</h1><p>Organize your API keys by project</p>' +
+    '<button class="btn btn-primary btn-sm" onclick="createProject()">+ New Project</button></div>' +
+    '<div class="card"><table><thead><tr><th>Name</th><th>Description</th><th>Keys</th><th>Monthly Tokens</th><th>Created</th><th></th></tr></thead>' +
+    '<tbody id="projects-table"><tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
 }
 
-window.addEventListener('hashchange', render);
-render();
+async function loadProjects() {
+  try {
+    const d = await api('/v1/projects');
+    const tbody = document.getElementById('projects-table');
+    const projects = d.projects || [];
+    if (!projects.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">No projects</td></tr>'; return; }
+    tbody.innerHTML = projects.map((p: any) => '<tr><td>' + esc(p.name) + '</td><td style="color:var(--fg2)">' + esc(p.description || '') + '</td>' +
+      '<td>' + (p.key_count || 0) + '</td><td>' + fmt(p.monthly_tokens || 0) + '</td>' +
+      '<td style="font-size:.8rem;color:var(--fg2)">' + (p.created_at ? new Date(p.created_at).toLocaleDateString() : '') + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.id + '\')">Delete</button></td></tr>').join('');
+  } catch {}
+}
+
+async function createProject() {
+  const name = prompt('Project name:');
+  if (!name) return;
+  try {
+    const d = await api('/v1/projects', { method: 'POST', body: JSON.stringify({ name }) });
+    if (d.ok) { toast('Created', 'success'); loadProjects(); }
+    else toast(d.error || 'Failed', 'error');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project? Keys will be unlinked but not revoked.')) return;
+  try { await api('/v1/projects/' + id, { method: 'DELETE' }); toast('Deleted', 'success'); loadProjects(); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ ORGANIZATIONS ============
+
+function orgs() {
+  return '<div class="main"><div class="page-header"><h1>Organizations</h1><p>Team management</p>' +
+    '<button class="btn btn-primary btn-sm" onclick="createOrg()">+ New Org</button></div>' +
+    '<div id="orgs-list"></div></div>';
+}
+
+async function loadOrgs() {
+  try {
+    const d = await api('/v1/orgs');
+    const list = document.getElementById('orgs-list');
+    const orgs = d.orgs || [];
+    if (!orgs.length) { list.innerHTML = '<p style="color:var(--fg3)">No organizations</p>'; return; }
+    list.innerHTML = orgs.map((o: any) =>
+      '<div class="card"><div class="card-header"><h3>' + esc(o.name) + '</h3>' +
+      '<div><span class="tag tag-enterprise">Owner</span></div></div>' +
+      '<p style="padding:0 1rem 1rem;color:var(--fg2);font-size:.85rem">ID: ' + esc(o.id) + ' · Members: ' + o.member_count +
+      ' · Your role: <span class="tag tag-enterprise">' + o.my_role?.toUpperCase() + '</span></p></div>'
+    ).join('');
+    // Load members for each org
+    for (const o of orgs) {
+      try {
+        const m = await api('/v1/orgs/' + o.id + '/members');
+        const card = list.querySelector('[data-org="' + o.id + '"]') || document.createElement('div');
+        // Inline...
+      } catch {}
+    }
+  } catch {}
+}
+
+async function createOrg() {
+  const name = prompt('Organization name:');
+  if (!name) return;
+  try {
+    const d = await api('/v1/orgs', { method: 'POST', body: JSON.stringify({ name }) });
+    if (d.ok) { toast('Created', 'success'); loadOrgs(); }
+    else toast(d.error || 'Failed', 'error');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ INIT ============
+
+init();
 </script>
 </body>
 </html>
