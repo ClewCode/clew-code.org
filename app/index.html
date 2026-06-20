@@ -105,9 +105,9 @@ label { display: block; font-size: .85rem; font-weight: 500; color: var(--fg2); 
 .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 @media (max-width: 768px) { .sidebar { width: auto; padding: 1rem; } .sidebar a span:last-child { display: none; } .sidebar .user-info { display: none; } }
 
-.chart-bars { display: flex; gap: 4px; align-items: flex-end; height: 120px; padding: .5rem 0; }
-.chart-bar { flex: 1; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; opacity: .7; }
-.chart-bar:hover { opacity: 1; }
+.chart-bars { display: flex; gap: 3px; align-items: flex-end; height: 120px; padding: .5rem 0; }
+.chart-bar { flex: 1; background: linear-gradient(to top, var(--accent), var(--accent2)); border-radius: 3px 3px 0 0; min-height: 2px; opacity: .8; transition: all .2s; cursor: pointer; position: relative; }
+.chart-bar:hover { opacity: 1; transform: scaleY(1.05); transform-origin: bottom; }
 </style>
 </head>
 <body>
@@ -252,8 +252,14 @@ async function loadOverview() {
     const maxTokens = Math.max(...daily.chart.map(d => d.tokens), 1);
     chart.innerHTML = daily.chart.map(d => {
       const h = d.tokens > 0 ? Math.max(4, (d.tokens / maxTokens) * 80) : 2;
-      return '<div class="chart-bar" style="height:' + h + 'px" title="' + d.date + ': ' + d.tokens.toLocaleString() + ' tokens"></div>';
+      const date = new Date(d.date + 'T00:00:00');
+      const label = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      return '<div class="chart-bar" style="height:' + h + 'px" title="' + label + ': ' + d.tokens.toLocaleString() + ' tokens, ' + d.requests + ' req"></div>';
     }).join('');
+    // Add total under chart
+    const totalTokens = daily.chart.reduce((s, d) => s + d.tokens, 0);
+    const totalReq = daily.chart.reduce((s, d) => s + d.requests, 0);
+    chart.parentElement.innerHTML += '<div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--fg3);margin-top:.5rem"><span>' + daily.chart[0]?.date?.slice(0,7) + ' — ' + daily.chart[daily.chart.length-1]?.date?.slice(0,10) + '</span><span>' + totalTokens.toLocaleString() + ' tokens total · ' + totalReq + ' requests</span></div>';
   } catch (e) {
     document.getElementById('stat-requests').textContent = '?';
     document.getElementById('stat-tokens').textContent = '?';
@@ -264,8 +270,8 @@ async function loadOverview() {
 
 function keys() {
   return '<div class="main"><div class="page-header"><h1>API Keys</h1><p>Manage your API keys</p></div>' +
-    '<div class="card"><div class="card-header"><h3>Your Keys</h3><button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button></div>' +
-    '<table><thead><tr><th>Name</th><th>Key</th><th>Status</th><th>Created</th><th>Last Used</th><th></th></tr></thead>' +
+    '<div class="card"><div class="card-header"><h3>Your Keys</h3><button class="btn btn-primary btn-sm" onclick="createKeyWithCap()">+ New Key</button></div>' +
+    '<table><thead><tr><th>Name</th><th>Key</th><th>Monthly Cap</th><th>Status</th><th>Created</th><th></th></tr></thead>' +
     '<tbody id="keys-table"><tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">Loading...</td></tr></tbody></table></div></div>';
 }
 
@@ -277,19 +283,25 @@ async function loadKeys() {
     if (!STATE.keys.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--fg3);padding:2rem">No keys. Create one!</td></tr>'; return; }
     tbody.innerHTML = STATE.keys.map(k =>
       '<tr><td>' + k.name + '</td><td class="mono">' + k.key_prefix + '...</td>' +
+      '<td>' + (k.monthly_cap ? k.monthly_cap.toLocaleString() + ' tokens' : '<span style="color:var(--fg3)">Unlimited</span>') + '</td>' +
       '<td><span class="tag ' + (k.active ? 'tag-active' : 'tag-revoked') + '">' + (k.active ? 'Active' : 'Revoked') + '</span></td>' +
       '<td class="mono">' + (k.created_at ? new Date(k.created_at).toLocaleDateString() : '') + '</td>' +
-      '<td class="mono">' + (k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : 'Never') + '</td>' +
       '<td>' + (k.active ? '<button class="btn btn-danger btn-sm" onclick="revokeKey(\'' + k.id + '\')">Revoke</button>' : '') + '</td></tr>'
     ).join('');
   } catch (e) { document.getElementById('keys-table').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red)">Failed to load keys</td></tr>'; }
 }
 
-async function createKey() {
+async function createKeyWithCap() {
   const name = prompt('Name for this key:');
   if (!name) return;
-  try { const d = await api('/v1/keys', { method: 'POST' }); toast('Key: ' + d.key, 'success'); loadKeys(); }
-  catch (e) { toast(e.message, 'error'); }
+  const cap = prompt('Monthly token cap (leave empty for unlimited):');
+  const monthlyCap = cap ? parseInt(cap, 10) : null;
+  if (cap && (isNaN(monthlyCap) || monthlyCap <= 0)) { toast('Invalid cap', 'error'); return; }
+  try {
+    const d = await api('/v1/keys', { method: 'POST', body: JSON.stringify({ name, monthly_cap: monthlyCap || undefined }) });
+    toast('Key created: ' + d.key, 'success');
+    loadKeys();
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 async function revokeKey(id) {
@@ -486,11 +498,12 @@ async function showOrg(orgId) {
 async function inviteMember() {
   const email = prompt('Email of user to invite:');
   if (!email) return;
-  const role = prompt('Role (admin/member/viewer):', 'member') || 'member';
-  if (!['admin', 'member', 'viewer'].includes(role)) { toast('Invalid role', 'error'); return; }
+  const roleInput = prompt('Role (admin / member / viewer):', 'member') || 'member';
+  const r = roleInput.trim().toLowerCase();
+  if (!['admin', 'member', 'viewer'].includes(r)) { toast('Invalid role — use: admin, member, or viewer', 'error'); return; }
   try {
-    await api('/v1/orgs/' + selectedOrgId + '/members', { method: 'POST', body: JSON.stringify({ email, invite_role: role }) });
-    toast('Invited ' + email, 'success');
+    await api('/v1/orgs/' + selectedOrgId + '/members', { method: 'POST', body: JSON.stringify({ email, invite_role: r }) });
+    toast('Invited ' + email + ' as ' + r, 'success');
     showOrg(selectedOrgId);
   } catch (e) { toast(e.message, 'error'); }
 }
