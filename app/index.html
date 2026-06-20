@@ -159,7 +159,7 @@ function render() {
   const hash = (location.hash || '#overview').slice(1);
   STATE.page = hash;
 
-  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok, models };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs, byok, models, media };
   const content = (pages[hash] || overview)();
   document.getElementById('app').innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -174,13 +174,14 @@ function render() {
   if (hash === 'billing') loadBilling();
   if (hash === 'byok') loadByok();
   if (hash === 'models') loadModels();
+  if (hash === 'media') loadMedia();
 }
 
 function sidebar() {
   const links = [
     { h: 'overview', l: 'Dashboard' }, { h: 'orgs', l: 'Organizations' },
     { h: 'projects', l: 'Projects' }, { h: 'keys', l: 'API Keys' },
-    { h: 'models', l: 'Models' }, { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
+    { h: 'models', l: 'Models' }, { h: 'media', l: 'Media' }, { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' }, { h: 'byok', l: 'My Keys' },
     { h: 'settings', l: 'Settings' },
   ];
   const adminLinks = (STATE.user?.tier === 'enterprise')
@@ -430,6 +431,29 @@ function filterModels() {
 }
 
 // ============ USAGE ============
+
+// ========== MEDIA HISTORY ==========
+function media() {
+  return '<div class="main"><div class="page-header"><h1>Media History</h1><p>Your generated images and videos</p></div>' +
+    '<div class="card"><table><thead><tr><th>Model</th><th>Provider</th><th>Type</th><th>Created</th></tr></thead>' +
+    '<tbody id="media-table"><tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadMedia() {
+  try {
+    const d = await api('/v1/media/history');
+    const tbody = document.getElementById('media-table');
+    const items = d.history || [];
+    if (!items.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">No media generated yet. Try <a href="#models" style="color:var(--accent)">image generation</a>.</td></tr>'; return; }
+    tbody.innerHTML = items.map((m: any) => {
+      const type = m.model && (m.model.includes('image') || m.model.includes('dall-e')) ? '🖼️ Image' : '🎬 Video';
+      return '<tr><td style="font-family:var(--mono);font-size:.82rem">' + m.model + '</td>' +
+        '<td><span class="tag tag-' + m.provider + '">' + m.provider + '</span></td>' +
+        '<td>' + type + '</td>' +
+        '<td style="font-size:.8rem;color:var(--fg2)">' + (m.created_at ? new Date(m.created_at).toLocaleString() : '') + '</td></tr>';
+    }).join('');
+  } catch {}
+}
 
 function usage() {
   return '<div class="main"><div class="page-header"><h1>Usage</h1><p>Token usage and costs by provider</p></div>' +

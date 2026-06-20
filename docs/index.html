@@ -78,6 +78,8 @@ td { padding: .5rem; border-bottom: 1px solid var(--line); color: var(--fg2); }
   <a href="#rate-limits">Rate Limits</a>
   <div class="section">API Reference</div>
   <a href="#chat">Chat Completions</a>
+  <a href="#images">Image Generation</a>
+  <a href="#video">Video Generation</a>
   <a href="#keys">API Keys</a>
   <a href="#usage">Usage</a>
   <a href="#billing">Billing</a>
@@ -203,7 +205,49 @@ curl -X POST https://api.clew-code.org/v1/chat/completions \
   <li><code>X-RateLimit-Remaining</code> — Requests remaining in current window</li>
   <li><code>X-Cost-USD</code> — Cost of the request in USD</li>
   <li><code>X-Tier</code> — Your account tier (free/pro/enterprise)</li>
+  <li><code>X-Key-Source</code> — <code>pool</code> (our key) or <code>byok</code> (your key)</li>
 </ul>
+
+<h3>Free Auto-Routing</h3>
+<p>Use <code>clew/free</code> to automatically route to the best available free model. Falls back if rate limited.</p>
+<pre>curl -X POST https://api.clew-code.org/v1/chat/completions \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -d <span class="s">'{"model":"clew/free","messages":[{"role":"user","content":"Hello!"}]}'</span></pre>
+
+<h3>OCR — Extract Text from Images</h3>
+<p>Use <code>clew/ocr</code> to extract text from images. Supports Thai and English. Auto-routes through DeepSeek OCR, NVIDIA VL, or Groq Vision.</p>
+<pre>curl -X POST https://api.clew-code.org/v1/chat/completions \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -d <span class="s">'{"model":"clew/ocr","messages":[{"role":"user","content":[{"type":"image_url","image_url":{"url":"https://example.com/document.jpg"}}]}]}'</span></pre>
+<p>Choose model: <code>clew/ocr/nvidia</code>, <code>clew/ocr/deepseek</code></p>
+
+<h3>clew/ Prefix</h3>
+<p>Prefix any model with <code>clew/</code> — automatically resolves to the correct provider. Browse all 500+ models on the <a href="https://clew-code.org/app/#models">Models page</a>.</p>
+<pre><span class="c"># These are equivalent:</span>
+{"model":"gpt-4o-mini"}
+{"model":"clew/gpt-4o-mini"}</pre>
+
+<h2 id="images">Image Generation</h2>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/images/generations</span>
+  <div class="desc">Generate images from text prompts</div>
+  <div class="auth">Requires auth</div>
+</div>
+<p>Supported models: <code>minimax-image-01</code>, <code>dall-e-3</code></p>
+<pre>curl -X POST https://api.clew-code.org/v1/images/generations \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -d <span class="s">'{"model":"minimax-image-01","prompt":"a cute cat"}'</span></pre>
+
+<h2 id="video">Video Generation</h2>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/video/generations</span>
+  <div class="desc">Generate videos from text prompts</div>
+  <div class="auth">Requires auth</div>
+</div>
+<p>Supported models: <code>minimax-hailuo-2.3</code></p>
+<pre>curl -X POST https://api.clew-code.org/v1/video/generations \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -d <span class="s">'{"model":"minimax-hailuo-2.3","prompt":"a cat walking in the park"}'</span></pre>
 
 <h2 id="keys">API Keys</h2>
 <div class="endpoint">
