@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clew API — Docs</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f; --bg2: #12121a; --bg3: #1a1a28;
+  --fg: #e4e4e7; --fg2: #a1a1aa; --fg3: #6b6b80;
+  --accent: #a855f7; --accent2: #c084fc; --line: #27272a;
+  --radius: 10px; --green: #22c55e; --red: #ef4444; --yellow: #f59e0b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg);
+  display: flex; -webkit-font-smoothing: antialiased;
+}
+nav {
+  width: 280px; height: 100vh; position: sticky; top: 0;
+  padding: 2rem 1rem; border-right: 1px solid var(--line); overflow-y: auto; flex-shrink: 0;
+}
+nav .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 2rem; display: block; text-decoration: none; }
+nav .logo span { color: var(--fg); }
+nav .section { font-size: .75rem; color: var(--fg3); text-transform: uppercase; letter-spacing: .05em; margin: 1.5rem 0 .5rem 0; font-weight: 600; }
+nav a { display: block; padding: .4rem .75rem; color: var(--fg2); text-decoration: none; font-size: .85rem; border-radius: 6px; }
+nav a:hover { background: var(--bg3); color: var(--fg); }
+.main { flex: 1; max-width: 800px; padding: 3rem 2rem 6rem; }
+h1 { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 .5rem; }
+p { color: var(--fg2); line-height: 1.6; margin-bottom: 1rem; font-size: .9rem; }
+code { font-family: 'JetBrains Mono', monospace; font-size: .8rem; background: var(--bg3); padding: .15rem .4rem; border-radius: 4px; }
+pre {
+  background: var(--bg3); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1rem; overflow-x: auto; margin: 1rem 0; font-size: .8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+pre .c { color: var(--fg3); }
+pre .k { color: var(--accent2); }
+pre .s { color: var(--green); }
+pre .n { color: var(--fg); }
+pre .o { color: var(--yellow); }
+.endpoint {
+  background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.25rem; margin: 1rem 0;
+}
+.endpoint .method {
+  display: inline-block; padding: .2rem .5rem; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: .75rem; font-weight: 600; margin-right: .5rem;
+}
+.method-get { background: rgba(34,197,94,.15); color: var(--green); }
+.method-post { background: rgba(168,85,247,.15); color: var(--accent); }
+.method-delete { background: rgba(239,68,68,.15); color: var(--red); }
+.endpoint .path { font-family: 'JetBrains Mono', monospace; font-size: .85rem; }
+.endpoint .desc { color: var(--fg2); font-size: .85rem; margin-top: .25rem; }
+.endpoint .auth { font-size: .75rem; color: var(--fg3); margin-top: .25rem; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .85rem; }
+th { text-align: left; color: var(--fg3); font-weight: 600; padding: .5rem; border-bottom: 1px solid var(--line); }
+td { padding: .5rem; border-bottom: 1px solid var(--line); color: var(--fg2); }
+.tag { display: inline-block; padding: .1rem .4rem; border-radius: 4px; font-size: .7rem; font-weight: 600; }
+.tag-free { background: var(--bg3); color: var(--fg2); }
+.tag-pro { background: #3b0764; color: var(--accent); }
+.tag-enterprise { background: #132b22; color: var(--green); }
+@media (max-width: 768px) { body { flex-direction: column; } nav { width: 100%; height: auto; position: static; } }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">clew<span>docs</span></a>
+  <div class="section">Getting Started</div>
+  <a href="#intro">Introduction</a>
+  <a href="#auth">Authentication</a>
+  <a href="#errors">Errors</a>
+  <a href="#models">Models</a>
+  <a href="#rate-limits">Rate Limits</a>
+  <div class="section">API Reference</div>
+  <a href="#chat">Chat Completions</a>
+  <a href="#keys">API Keys</a>
+  <a href="#usage">Usage</a>
+  <a href="#billing">Billing</a>
+  <a href="#telemetry">Telemetry</a>
+  <a href="#webhooks">Webhooks</a>
+  <a href="#plugins">Plugins</a>
+  <a href="#updates">Updates</a>
+  <div class="section">Resources</div>
+  <a href="#pricing">Pricing</a>
+  <a href="#dashboard">Dashboard</a>
+</nav>
+<div class="main">
+
+<h1>Clew API Docs</h1>
+<p>AI provider gateway — route requests through <code>api.clew-code.org</code> with usage tracking, API key auth, and rate limiting.</p>
+<p>Base URL: <code>https://api.clew-code.org</code></p>
+
+<h2 id="intro">Introduction</h2>
+<p>Clew API provides unified access to multiple AI providers (DeepSeek, OpenAI, Groq, Mistral, etc.) through a single OpenAI-compatible endpoint. It handles authentication, rate limiting, usage tracking, and billing.</p>
+
+<h3>Quick Start</h3>
+<pre><span class="c"># 1. Create account</span>
+curl -X POST https://api.clew-code.org/v1/auth/signup \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"email":"you@example.com","password":"yourpassword"}'</span>
+
+<span class="c"># 2. Login to get token</span>
+TOKEN=$(curl -s -X POST https://api.clew-code.org/v1/auth/login \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"email":"you@example.com","password":"yourpassword"}'</span> \
+  | python3 -c <span class="s">"import sys,json; print(json.load(sys.stdin)['token'])"</span>)
+
+<span class="c"># 3. Call DeepSeek</span>
+curl -X POST https://api.clew-code.org/v1/chat/completions \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"model":"deepseek-v4-pro","messages":[{"role":"user","content":"Hello!"}]}'</span></pre>
+
+<h2 id="auth">Authentication</h2>
+<p>Two authentication methods:</p>
+<table>
+<tr><th>Method</th><th>Header</th><th>Use Case</th></tr>
+<tr><td>Bearer Token</td><td><code>Authorization: Bearer &lt;token&gt;</code></td><td>Dashboard &amp; personal use (from login)</td></tr>
+<tr><td>API Key</td><td><code>X-API-Key: &lt;key&gt;</code></td><td>Programmatic access (created in dashboard)</td></tr>
+</table>
+
+<h3>Sign Up</h3>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/auth/signup</span>
+  <div class="desc">Create a new account (password must be 8+ characters)</div>
+</div>
+
+<h3>Login</h3>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/auth/login</span>
+  <div class="desc">Login with email + password, returns session token</div>
+</div>
+
+<h3>Get Profile</h3>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/auth/me</span>
+  <div class="desc">Get current user profile and usage stats</div>
+  <div class="auth">Requires: Bearer token</div>
+</div>
+
+<h3>Password Reset</h3>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/auth/forgot</span>
+  <div class="desc">Request password reset link</div>
+</div>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/auth/reset</span>
+  <div class="desc">Reset password with token</div>
+</div>
+
+<h2 id="models">Models</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/models</span>
+  <div class="desc">List all available AI models with pricing</div>
+</div>
+
+<p>Supported models:</p>
+<table>
+<tr><th>Model</th><th>Provider</th><th>Context</th><th>Pricing</th></tr>
+<tr><td>deepseek-v4-pro</td><td>DeepSeek</td><td>1M</td><td>$1.50/$4 per 1M</td></tr>
+<tr><td>deepseek-v4</td><td>DeepSeek</td><td>1M</td><td>$0.50/$1.50 per 1M</td></tr>
+<tr><td>gpt-5.5</td><td>OpenAI</td><td>1M</td><td>$10/$40 per 1M</td></tr>
+<tr><td>groq/llama4</td><td>Groq</td><td>100K</td><td>$0.50/$1 per 1M</td></tr>
+<tr><td>mistral/large</td><td>Mistral</td><td>128K</td><td>$2/$6 per 1M</td></tr>
+</table>
+
+<h2 id="chat">Chat Completions</h2>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/chat/completions</span>
+  <div class="desc">Send a chat completion request to any supported model (OpenAI-compatible)</div>
+  <div class="auth">Requires: Bearer token or API key</div>
+</div>
+
+<h3>Request Body</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>model</td><td>string</td><td>yes</td><td>Model ID from <code>/v1/models</code></td></tr>
+<tr><td>messages</td><td>array</td><td>yes</td><td>Array of {role, content} objects</td></tr>
+<tr><td>stream</td><td>boolean</td><td>no</td><td>Enable SSE streaming</td></tr>
+<tr><td>max_tokens</td><td>number</td><td>no</td><td>Max tokens in response</td></tr>
+</table>
+
+<h3>Non-Streaming Example</h3>
+<pre>curl -X POST https://api.clew-code.org/v1/chat/completions \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"model":"deepseek-v4-pro","messages":[{"role":"user","content":"Hello!"}]}'</span></pre>
+
+<h3>Streaming Example</h3>
+<pre>curl -X POST https://api.clew-code.org/v1/chat/completions \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"model":"deepseek-v4-pro","messages":[{"role":"user","content":"Hello!"}],"stream":true}'</span></pre>
+
+<p>Response headers include:</p>
+<ul style="color:var(--fg2);font-size:.85rem;line-height:2;margin-bottom:1rem;padding-left:1.5rem">
+  <li><code>X-RateLimit-Limit</code> — Max requests per minute</li>
+  <li><code>X-RateLimit-Remaining</code> — Requests remaining in current window</li>
+  <li><code>X-Cost-USD</code> — Cost of the request in USD</li>
+  <li><code>X-Tier</code> — Your account tier (free/pro/enterprise)</li>
+</ul>
+
+<h2 id="keys">API Keys</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/keys</span>
+  <div class="desc">List your API keys</div>
+</div>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/keys</span>
+  <div class="desc">Create a new API key</div>
+</div>
+<div class="endpoint">
+  <span class="method method-delete">DELETE</span><span class="path">/v1/keys/:id</span>
+  <div class="desc">Revoke an API key</div>
+</div>
+
+<h2 id="usage">Usage</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/usage</span>
+  <div class="desc">Get usage summary and breakdown by provider</div>
+</div>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/usage/daily?days=30</span>
+  <div class="desc">Get daily usage chart data (fills missing days with zeroes)</div>
+</div>
+
+<h2 id="billing">Billing</h2>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/billing/checkout</span>
+  <div class="desc">Upgrade/downgrade tier or get Stripe checkout URL</div>
+</div>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/billing/invoices</span>
+  <div class="desc">Get monthly invoice history derived from usage logs</div>
+</div>
+
+<h2 id="telemetry">Telemetry</h2>
+<p>Anonymous endpoints for Clew Code CLI instances to report usage.</p>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/telemetry/ping</span>
+  <div class="desc">Instance heartbeat (no auth required)</div>
+</div>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/telemetry/event</span>
+  <div class="desc">Record a single telemetry event</div>
+</div>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/telemetry/batch</span>
+  <div class="desc">Batch telemetry events</div>
+</div>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/telemetry/stats</span>
+  <div class="desc">Aggregated telemetry stats (admin/enterprise only)</div>
+</div>
+
+<h2 id="webhooks">Webhooks</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/webhooks</span>
+  <div class="desc">List your webhooks</div>
+</div>
+<div class="endpoint">
+  <span class="method method-post">POST</span><span class="path">/v1/webhooks</span>
+  <div class="desc">Create a webhook</div>
+</div>
+<div class="endpoint">
+  <span class="method method-delete">DELETE</span><span class="path">/v1/webhooks/:id</span>
+  <div class="desc">Delete a webhook</div>
+</div>
+
+<h2 id="plugins">Plugins</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/plugins</span>
+  <div class="desc">List marketplace plugins (optional: ?tag= or ?q=)</div>
+</div>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/plugins/:name</span>
+  <div class="desc">Get plugin details</div>
+</div>
+
+<h2 id="updates">Updates</h2>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/updates</span>
+  <div class="desc">Get latest version</div>
+</div>
+<div class="endpoint">
+  <span class="method method-get">GET</span><span class="path">/v1/updates/check?current=0.1.0</span>
+  <div class="desc">Check if update is available</div>
+</div>
+
+<h2 id="pricing">Pricing</h2>
+<table>
+<tr><th>Tier</th><th>Price</th><th>Rate Limit</th><th>Token Limit/Month</th></tr>
+<tr><td><span class="tag tag-free">Free</span></td><td>$0</td><td>10 req/min</td><td>100K tokens</td></tr>
+<tr><td><span class="tag tag-pro">Pro</span></td><td>$10/mo</td><td>100 req/min</td><td>5M tokens</td></tr>
+<tr><td><span class="tag tag-enterprise">Enterprise</span></td><td>$100/mo</td><td>1000 req/min</td><td>Unlimited</td></tr>
+</table>
+
+<h2 id="dashboard">Dashboard</h2>
+<p>Manage your account at <a href="https://clew-code.org/app/" style="color:var(--accent)">clew-code.org/app/</a> — view usage, create API keys, manage billing, and more.</p>
+
+</div> <!-- .main -->
+</body>
+</html>
