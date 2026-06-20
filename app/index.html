@@ -145,7 +145,11 @@ async function render() {
   const pages = { overview, keys, usage, billing, settings, admin };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
+
+  // Load real data after page render
+  if (hash === 'overview') loadOverview();
   if (hash === 'keys') loadKeys();
+  if (hash === 'usage') loadUsage();
 }
 
 function sidebar() {
@@ -204,12 +208,39 @@ function bindLogin() {
 function overview() {
   return '<div class="main"><div class="page-header"><h1>Dashboard</h1><p>Clew API overview</p></div>' +
     '<div class="stats-grid">' +
-    '<div class="stat-card"><div class="label">Requests (30d)</div><div class="value" style="color:var(--accent)">0</div></div>' +
-    '<div class="stat-card"><div class="label">Tokens Used</div><div class="value" style="color:var(--accent2)">0</div></div>' +
-    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" style="color:var(--fg)">$0.00</div></div>' +
-    '<div class="stat-card"><div class="label">Active Keys</div><div class="value" style="color:var(--fg)">0</div></div></div>' +
+    '<div class="stat-card"><div class="label">Requests (30d)</div><div class="value" style="color:var(--accent)" id="stat-requests">—</div></div>' +
+    '<div class="stat-card"><div class="label">Tokens Used</div><div class="value" style="color:var(--accent2)" id="stat-tokens">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" style="color:var(--fg)" id="stat-cost">—</div></div>' +
+    '<div class="stat-card"><div class="label">Active Keys</div><div class="value" style="color:var(--fg)" id="stat-keys">—</div></div></div>' +
     '<div class="card"><div class="card-header"><h3>Usage (Last 30 Days)</h3></div>' +
-    '<div class="chart-bars">' + Array.from({length: 14}, () => '<div class="chart-bar" style="height:' + (4 + Math.random() * 40) + 'px"></div>').join('') + '</div></div></div>';
+    '<div class="chart-bars" id="usage-chart"><div style="padding:1rem;text-align:center;color:var(--fg3)">Loading...</div></div></div></div>';
+}
+
+async function loadOverview() {
+  try {
+    const usage = await api('/v1/usage');
+    const me = await api('/v1/auth/me');
+    const sum = usage.summary || {};
+    document.getElementById('stat-requests').textContent = sum.total_requests || '0';
+    document.getElementById('stat-tokens').textContent = (sum.total_tokens || 0).toLocaleString();
+    document.getElementById('stat-cost').textContent = '$' + (sum.total_cost || 0).toFixed(4);
+    document.getElementById('stat-keys').textContent = me.user?.active_keys || '0';
+
+    // Fake chart bars (real daily data requires separate endpoint)
+    const chart = document.getElementById('usage-chart');
+    chart.innerHTML = '';
+    for (let i = 0; i < 14; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      bar.style.height = (4 + Math.random() * 40) + 'px';
+      chart.appendChild(bar);
+    }
+  } catch (e) {
+    document.getElementById('stat-requests').textContent = '?';
+    document.getElementById('stat-tokens').textContent = '?';
+    document.getElementById('stat-cost').textContent = '?';
+    document.getElementById('stat-keys').textContent = '?';
+  }
 }
 
 function keys() {
@@ -250,11 +281,36 @@ async function revokeKey(id) {
 
 function usage() {
   return '<div class="main"><div class="page-header"><h1>Usage</h1><p>Token usage and costs by provider</p></div>' +
-    '<div class="stats-grid"><div class="stat-card"><div class="label">Prompt Tokens</div><div class="value">0</div></div>' +
-    '<div class="stat-card"><div class="label">Completion Tokens</div><div class="value">0</div></div>' +
-    '<div class="stat-card"><div class="label">Total Cost</div><div class="value">$0.00</div></div></div>' +
+    '<div class="stats-grid"><div class="stat-card"><div class="label">Prompt Tokens</div><div class="value" id="usage-pt">—</div></div>' +
+    '<div class="stat-card"><div class="label">Completion Tokens</div><div class="value" id="usage-ct">—</div></div>' +
+    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" id="usage-cost">—</div></div></div>' +
     '<div class="card"><h3>By Provider</h3><table><thead><tr><th>Provider</th><th>Tokens</th><th>Cost</th></tr></thead>' +
-    '<tbody><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">No data yet</td></tr></tbody></table></div></div>';
+    '<tbody id="usage-providers"><tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</td></tr></tbody></table></div></div>';
+}
+
+async function loadUsage() {
+  try {
+    const data = await api('/v1/usage');
+    const sum = data.summary || {};
+    document.getElementById('usage-pt').textContent = (sum.total_prompt_tokens || 0).toLocaleString();
+    document.getElementById('usage-ct').textContent = (sum.total_completion_tokens || 0).toLocaleString();
+    document.getElementById('usage-cost').textContent = '$' + (sum.total_cost || 0).toFixed(4);
+
+    const tbody = document.getElementById('usage-providers');
+    const providers = data.by_provider || [];
+    if (!providers.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--fg3);text-align:center;padding:1rem">No data yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = providers.map((p: any) =>
+      '<tr><td>' + p.provider + '</td><td>' + ((p.total_prompt_tokens || 0) + (p.total_completion_tokens || 0)).toLocaleString() + '</td>' +
+      '<td>$' + (p.total_cost || 0).toFixed(4) + '</td></tr>'
+    ).join('');
+  } catch (e) {
+    document.getElementById('usage-pt').textContent = '?';
+    document.getElementById('usage-ct').textContent = '?';
+    document.getElementById('usage-cost').textContent = '?';
+  }
 }
 
 function billing() {
