@@ -195,7 +195,7 @@ function bindLogin() {
       STATE.token = data.token;
       STATE.user = data.user;
       localStorage.setItem('clew_session_token', data.token);
-      location.hash = 'overview';
+      window.location.href = '/app/#overview';
     } catch (e) { err.textContent = e.message; err.classList.add('show'); }
     document.getElementById('auth-btn').disabled = false;
   };
