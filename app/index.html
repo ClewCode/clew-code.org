@@ -175,6 +175,7 @@ function render() {
   if (hash === 'byok') loadByok();
   if (hash === 'models') loadModels();
   if (hash === 'media') loadMedia();
+  if (hash === 'settings') loadSettings();
 }
 
 function sidebar() {
@@ -537,7 +538,7 @@ async function checkout() {
 // ============ SETTINGS ============
 
 function settings() {
-  return '<div class="main"><div class="page-header"><h1>Settings</h1><p>Account settings</p></div>' +
+  return '<div class="main"><div class="page-header"><h1>Settings</h1><p>Account settings and preferences</p></div>' +
     '<div class="card"><div class="card-header"><h3>Account</h3></div><div style="padding:1rem"><p>Email: <strong>' + esc(STATE.user.email) + '</strong></p><p>Tier: <span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></p>' +
     '<button class="btn btn-sm" style="margin-top:.5rem" onclick="logout()">Sign Out</button></div></div>' +
     '<div class="card"><div class="card-header"><h3>CLI Token</h3></div><div style="padding:1rem">' +
@@ -547,11 +548,45 @@ function settings() {
     '<button class="btn btn-sm" onclick="copyCliToken()" style="white-space:nowrap">Copy Token</button>' +
     '</div>' +
     '<p style="font-size:.75rem;color:var(--fg3);margin-top:.5rem">Then run: <code style="font-size:.75rem">clew auth import &lt;token&gt;</code> in your terminal</p>' +
-    '</div></div></div>';
+    '</div></div>' +
+    '<div class="card"><div class="card-header"><h3>Preferences</h3></div><div style="padding:1rem" id="settings-prefs">' +
+    '<p style="color:var(--fg3);font-size:.85rem">Loading...</p></div></div></div>';
 }
 
 function copyCliToken() {
   navigator.clipboard.writeText(STATE.token).then(() => toast('Token copied!', 'success')).catch(() => toast('Copy failed', 'error'));
+}
+
+async function loadSettings() {
+  try {
+    const d = await api('/v1/user/settings');
+    const s = d.settings || {};
+    const providers = (s.preferred_providers || []).join(', ');
+    document.getElementById('settings-prefs').innerHTML =
+      '<div style="display:grid;gap:1rem">' +
+      '<div><label style="font-size:.82rem;color:var(--fg2);display:block;margin-bottom:.3rem">Default Model</label>' +
+      '<input id="pref-model" type="text" value="' + esc(s.default_model || '') + '" style="width:100%;padding:.5rem .75rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size:.85rem;font-family:var(--mono)"></div>' +
+      '<div><label style="font-size:.82rem;color:var(--fg2);display:block;margin-bottom:.3rem">Preferred Providers (order)</label>' +
+      '<input id="pref-providers" type="text" value="' + esc(providers) + '" style="width:100%;padding:.5rem .75rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size:.85rem;font-family:var(--mono)"></div>' +
+      '<div style="display:flex;align-items:center;gap:.5rem">' +
+      '<input id="pref-telemetry" type="checkbox" ' + (s.telemetry_enabled !== false ? 'checked' : '') + ' style="accent-color:var(--accent)">' +
+      '<label for="pref-telemetry" style="font-size:.85rem;color:var(--fg2)">Enable telemetry (usage stats)</label></div>' +
+      '<button class="btn btn-sm" onclick="saveSettings()" style="align-self:flex-start">Save Preferences</button></div>';
+  } catch {}
+}
+
+async function saveSettings() {
+  const model = (document.getElementById('pref-model') as HTMLInputElement)?.value || '';
+  const providers = (document.getElementById('pref-providers') as HTMLInputElement)?.value || '';
+  const telemetry = (document.getElementById('pref-telemetry') as HTMLInputElement)?.checked || false;
+  const preferred_providers = providers.split(',').map((s: string) => s.trim()).filter(Boolean);
+  try {
+    await api('/v1/user/settings', {
+      method: 'PUT',
+      body: JSON.stringify({ default_model: model, preferred_providers, telemetry_enabled: telemetry }),
+    });
+    toast('Settings saved!', 'success');
+  } catch { toast('Failed to save', 'error'); }
 }
 
 function logout() {
