@@ -152,7 +152,7 @@ async function render() {
 
   if (!STATE.user || hash === 'login') { app.innerHTML = loginPage(); bindLogin(); return; }
 
-  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects };
+  const pages = { overview, keys, usage, billing, settings, admin, instances, events, projects, orgs };
   const content = (pages[hash] || overview)();
   app.innerHTML = '<div class="app">' + sidebar() + content + '</div><div id="toast"></div>';
 
@@ -164,13 +164,15 @@ async function render() {
   if (hash === 'events') loadEvents();
   if (hash === 'admin') loadAdminStats();
   if (hash === 'projects') loadProjects();
+  if (hash === 'orgs') loadOrgs();
 }
 
 function sidebar() {
   const links = [
-    { h: 'overview', l: 'Dashboard' }, { h: 'projects', l: 'Projects' },
-    { h: 'keys', l: 'API Keys' }, { h: 'usage', l: 'Usage' },
-    { h: 'billing', l: 'Billing' }, { h: 'settings', l: 'Settings' },
+    { h: 'overview', l: 'Dashboard' }, { h: 'orgs', l: 'Organizations' },
+    { h: 'projects', l: 'Projects' }, { h: 'keys', l: 'API Keys' },
+    { h: 'usage', l: 'Usage' }, { h: 'billing', l: 'Billing' },
+    { h: 'settings', l: 'Settings' },
   ];
   const adminLinks = (STATE.user?.role === 'admin' || STATE.user?.tier === 'enterprise')
     ? [{ h: 'admin', l: 'Admin' }, { h: 'instances', l: 'Instances' }, { h: 'events', l: 'Events' }]
@@ -398,6 +400,61 @@ async function deleteProject(id) {
     await api('/v1/projects/' + id, { method: 'DELETE' });
     toast('Deleted', 'success');
     loadProjects();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function orgs() {
+  return '<div class="main"><div class="page-header"><h1>Organizations</h1><p>Multi-tenant team management</p></div>' +
+    '<button class="btn btn-primary btn-sm" onclick="createOrg()" style="margin-bottom:1rem">+ New Organization</button>' +
+    '<div class="card" id="orgs-container"><div id="orgs-list" style="color:var(--fg3);text-align:center;padding:1rem">Loading...</div></div></div>';
+}
+
+async function loadOrgs() {
+  try {
+    const data = await api('/v1/orgs');
+    const owned = data.owned || [];
+    const member = data.member || [];
+    const el = document.getElementById('orgs-list');
+    if (!owned.length && !member.length) {
+      el.innerHTML = 'No organizations. Create one to get started.';
+      return;
+    }
+    el.innerHTML = '';
+    if (owned.length) {
+      el.innerHTML += '<h3 style="margin:.5rem 0">Owned</h3>';
+      owned.forEach(o => {
+        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line)">' +
+          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + esc(o.id.slice(0,8)) + '... · ' + new Date(o.created_at).toLocaleDateString() + '</span></div>' +
+          '<div><span class="tag tag-enterprise">Owner</span> <button class="btn btn-danger btn-sm" onclick="deleteOrg(\'' + o.id + '\')">Delete</button></div></div>';
+      });
+    }
+    if (member.length) {
+      el.innerHTML += '<h3 style="margin:.5rem 0;margin-top:1rem">Member</h3>';
+      member.forEach(o => {
+        el.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;border-bottom:1px solid var(--line)">' +
+          '<div><strong>' + esc(o.name) + '</strong><br><span style="font-size:.8rem;color:var(--fg2)">' + esc(o.id.slice(0,8)) + '... · Role: ' + o.role + '</span></div>' +
+          '<div><span class="tag tag-' + (o.role === 'admin' ? 'pro' : 'free') + '">' + o.role.toUpperCase() + '</span></div></div>';
+      });
+    }
+  } catch { document.getElementById('orgs-list').textContent = 'Failed to load'; }
+}
+
+async function createOrg() {
+  const name = prompt('Organization name:');
+  if (!name) return;
+  try {
+    await api('/v1/orgs', { method: 'POST', body: JSON.stringify({ name }) });
+    toast('Organization created', 'success');
+    loadOrgs();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteOrg(id) {
+  if (!confirm('Delete this organization? This cannot be undone.')) return;
+  try {
+    await api('/v1/orgs/' + id, { method: 'DELETE' });
+    toast('Deleted', 'success');
+    loadOrgs();
   } catch (e) { toast(e.message, 'error'); }
 }
 
