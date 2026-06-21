@@ -37,12 +37,12 @@
   --bg3: #121424;
   --fg: #f4f4f7;
   --fg2: #a1a1aa;
-  --accent: #22d3ee;       /* Cyan */
-  --accent-rgb: 34, 211, 238;
-  --accent2: #a855f7;      /* Purple */
-  --accent2-rgb: 168, 85, 247;
-  --accent3: #4f46e5;      /* Indigo */
-  --green-dim: rgba(34, 211, 238, 0.08);
+  --accent: #a855f7;       /* Purple */
+  --accent-rgb: 168, 85, 247;
+  --accent2: #c084fc;      /* Light purple */
+  --accent2-rgb: 192, 132, 252;
+  --accent3: #7c3aed;      /* Deep purple */
+  --accent-dim: rgba(168, 85, 247, 0.08);
   --line: #1b1e2e;
   --radius: 12px;
   --max-w: 1200px;
@@ -180,7 +180,7 @@ nav .links a:hover { color: var(--fg); }
   gap: .5rem;
   padding: .35rem 1rem;
   border-radius: 100px;
-  background: var(--green-dim);
+  background: var(--accent-dim);
   color: var(--accent);
   font-size: .8rem;
   font-weight: 600;
@@ -998,7 +998,7 @@ tsParticles.load('tsparticles', {
   background: { color: 'transparent' },
   particles: {
     number: { value: 60, density: { enable: true } },
-    color: { value: ['#22d3ee', '#a855f7', '#4f46e5'] },
+    color: { value: ['#a855f7', '#c084fc', '#7c3aed'] },
     shape: { type: 'circle' },
     opacity: {
       value: { min: 0.1, max: 0.25 },
@@ -1010,7 +1010,7 @@ tsParticles.load('tsparticles', {
     },
     links: {
       enable: true,
-      color: '#22d3ee',
+      color: '#a855f7',
       opacity: 0.05,
       distance: 150,
       width: 1
