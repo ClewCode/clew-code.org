@@ -29,18 +29,21 @@
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --bg2: #12121a;
-  --bg3: #1a1a28;
-  --fg: #e4e4e7;
+  --bg: #030307;
+  --bg2: #090a12;
+  --bg3: #121424;
+  --fg: #f4f4f7;
   --fg2: #a1a1aa;
-  --accent: #a855f7;
-  --accent2: #c084fc;
-  --green-dim: #3b0764;
-  --line: #27272a;
+  --accent: #22d3ee;       /* Cyan */
+  --accent-rgb: 34, 211, 238;
+  --accent2: #a855f7;      /* Purple */
+  --accent2-rgb: 168, 85, 247;
+  --accent3: #4f46e5;      /* Indigo */
+  --green-dim: rgba(34, 211, 238, 0.08);
+  --line: #1b1e2e;
   --radius: 12px;
   --max-w: 1200px;
   font-size: 16px;
@@ -48,11 +51,23 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Outfit', 'Noto Sans Thai', system-ui, sans-serif;
   background: var(--bg);
   color: var(--fg);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(34, 211, 238, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
 }
 ::selection { background: var(--accent); color: var(--bg); }
 
@@ -63,7 +78,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: .035;
+  opacity: .025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
 }
@@ -79,7 +94,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(10,10,15,.8);
+  background: rgba(3, 3, 7, 0.8);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
 }
@@ -89,8 +104,9 @@ nav .logo {
   font-size: 1.25rem;
   color: var(--accent);
   text-decoration: none;
+  display: flex;
+  align-items: center;
 }
-nav .logo span { color: var(--fg); }
 nav .links { display: flex; gap: 1.5rem; align-items: center; }
 nav .links a {
   color: var(--fg2);
@@ -112,19 +128,26 @@ nav .links a:hover { color: var(--fg); }
   border: none;
 }
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
   color: var(--bg);
 }
-.btn-primary:hover { background: #1abc90; transform: translateY(-1px); }
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(34, 211, 238, 0.5);
+  filter: brightness(1.1);
+}
 .btn-outline {
   background: transparent;
   border: 1px solid var(--line);
   color: var(--fg);
 }
-.btn-outline:hover { border-color: var(--fg2); }
+.btn-outline:hover {
+  border-color: var(--accent);
+  background: rgba(34, 211, 238, 0.05);
+}
 
 /* Container */
-.container { max-width: var(--max-w); margin: 0 auto; padding: 0 2rem; }
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
 
 /* Hero */
 .hero {
@@ -134,21 +157,22 @@ nav .links a:hover { color: var(--fg); }
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 6rem 2rem 4rem;
+  padding: 8rem 2rem 4rem;
   position: relative;
   z-index: 1;
   overflow: hidden;
 }
-.hero::before {
-  content: '';
+.hero-glow {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(ellipse at 30% 40%, rgba(34,211,167,.06) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 60%, rgba(6,182,212,.04) 0%, transparent 50%);
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.12) 0%, rgba(var(--accent2-rgb), 0.08) 50%, transparent 100%);
+  filter: blur(80px);
   pointer-events: none;
+  z-index: -1;
 }
 .hero-badge {
   display: inline-flex;
@@ -162,7 +186,7 @@ nav .links a:hover { color: var(--fg); }
   font-weight: 600;
   margin-bottom: 2rem;
   font-family: 'JetBrains Mono', monospace;
-  border: 1px solid rgba(34,211,167,.2);
+  border: 1px solid rgba(34, 211, 238, 0.2);
 }
 .hero h1 {
   font-family: 'JetBrains Mono', monospace;
@@ -186,62 +210,11 @@ nav .links a:hover { color: var(--fg); }
   margin-bottom: 2.5rem;
   font-weight: 400;
 }
-.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; z-index: 2; }
 
-/* Terminal mockup */
-.terminal {
-  margin-top: 3rem;
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-  width: 100%;
-  max-width: 680px;
-  text-align: left;
-}
-.terminal-bar {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .75rem 1rem;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--line);
-}
-.terminal-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-}
-.terminal-dot:nth-child(1) { background: #ef4444; }
-.terminal-dot:nth-child(2) { background: #f59e0b; }
-.terminal-dot:nth-child(3) { background: #22c55e; }
-.terminal-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .75rem;
-  color: var(--fg2);
-  margin-left: .5rem;
-}
-.terminal-body {
-  padding: 1.25rem 1.5rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .8rem;
-  line-height: 1.8;
-  overflow-x: auto;
-}
-.terminal-body .prompt { color: var(--accent); }
-.terminal-body .cmd { color: var(--fg); }
-.terminal-body .output { color: var(--fg2); }
-.terminal-body .cursor {
-  display: inline-block;
-  width: 8px;
-  height: 1rem;
-  background: var(--accent);
-  animation: blink 1s steps(2) infinite;
-  vertical-align: text-bottom;
-}
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
 
 /* Section */
-section { padding: 5rem 0; position: relative; }
+section { padding: 6rem 0; position: relative; }
 .section-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: .75rem;
@@ -272,16 +245,18 @@ section { padding: 5rem 0; position: relative; }
   gap: 1.5rem;
 }
 .feature-card {
-  background: var(--bg2);
+  background: rgba(9, 10, 18, 0.6);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 2rem;
   transition: all .3s;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 .feature-card:hover {
-  border-color: rgba(34,211,167,.3);
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(34, 211, 238, 0.2);
   transform: translateY(-2px);
 }
 .feature-card::before {
@@ -297,16 +272,22 @@ section { padding: 5rem 0; position: relative; }
 }
 .feature-card:hover::before { opacity: 1; }
 .feature-icon {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.5rem;
-  margin-bottom: .75rem;
+  margin-bottom: 1rem;
   color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.feature-svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.75;
 }
 .feature-card h3 {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: .5rem;
+  margin-bottom: .75rem;
 }
 .feature-card p {
   color: var(--fg2);
@@ -314,30 +295,241 @@ section { padding: 5rem 0; position: relative; }
   line-height: 1.6;
 }
 
-/* Providers */
+/* Providers list & filters */
+.provider-filters {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  background: rgba(18, 20, 36, 0.8);
+  border: 1px solid var(--line);
+  color: var(--fg2);
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  outline: none;
+}
+.filter-chip:hover {
+  border-color: var(--fg2);
+  color: var(--fg);
+}
+.filter-chip.active {
+  background: rgba(34, 211, 238, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.provider-search-box {
+  max-width: 400px;
+  margin: 0 auto 2.5rem;
+}
+.provider-search-box input {
+  width: 100%;
+  background: rgba(9, 10, 18, 0.7);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  text-align: center;
+}
+.provider-search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+}
 .provider-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
   gap: .75rem;
 }
 .provider-chip {
-  background: var(--bg2);
+  background: rgba(9, 10, 18, 0.6);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: .75rem 1rem;
-  font-size: .8rem;
+  font-size: .85rem;
   font-weight: 500;
   text-align: center;
-  transition: all .2s;
+  transition: all 0.2s;
   color: var(--fg2);
+  backdrop-filter: blur(8px);
 }
 .provider-chip:hover {
   border-color: var(--accent);
   color: var(--fg);
-  background: var(--bg3);
+  background: rgba(34, 211, 238, 0.05);
+}
+.provider-chip.hidden {
+  display: none !important;
 }
 
-/* How it works */
+/* Tabbed installation guide */
+.install-widget {
+  background: rgba(9, 10, 18, 0.6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 720px;
+  margin: 2rem auto 0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+}
+.install-tabs {
+  display: flex;
+  background: rgba(18, 20, 36, 0.8);
+  border-bottom: 1px solid var(--line);
+}
+.install-tab-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 1rem 1.5rem;
+  color: var(--fg2);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  flex: 1;
+}
+.install-tab-btn:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.02);
+}
+.install-tab-btn.active {
+  color: var(--accent);
+  background: var(--bg);
+  border-bottom: 2px solid var(--accent);
+  font-weight: 600;
+}
+.install-panel {
+  display: none;
+  padding: 2rem;
+}
+.install-panel.active {
+  display: block;
+}
+.code-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #030307;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow-x: auto;
+  gap: 1.5rem;
+}
+.code-wrapper code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.copy-btn {
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--accent);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.copy-btn:hover {
+  background: var(--accent);
+  color: #030307;
+}
+.copy-btn.copied {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: #fff;
+}
+
+/* FAQ Accordion */
+.faq-accordion {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.faq-item {
+  background: rgba(9, 10, 18, 0.6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+.faq-item:hover {
+  border-color: rgba(34, 211, 238, 0.2);
+}
+.faq-question {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--fg);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+}
+.faq-icon {
+  font-size: 1.25rem;
+  color: var(--accent);
+  transition: transform 0.3s;
+}
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+  padding: 0 1.5rem;
+}
+.faq-answer-inner {
+  overflow: hidden;
+}
+.faq-answer p {
+  color: var(--fg2);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding-bottom: 1.25rem;
+}
+.faq-item.active {
+  border-color: rgba(34, 211, 238, 0.3);
+  background: rgba(18, 20, 36, 0.6);
+}
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+  color: var(--accent2);
+}
+.faq-item.active .faq-answer {
+  grid-template-rows: 1fr;
+}
+
+/* How it works steps */
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -360,6 +552,7 @@ section { padding: 5rem 0; position: relative; }
   left: -.25rem;
   line-height: 1;
   z-index: 0;
+  opacity: 0.5;
 }
 .step h3 {
   font-family: 'JetBrains Mono', monospace;
@@ -376,38 +569,17 @@ section { padding: 5rem 0; position: relative; }
   z-index: 1;
 }
 
-/* CLI demo */
-.cli-demo {
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 2rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .85rem;
-  line-height: 2;
-  margin-top: 2rem;
-}
-.cli-demo .line { opacity: 0; animation: fadeIn .3s forwards; }
-.cli-demo .line:nth-child(1) { animation-delay: .1s; }
-.cli-demo .line:nth-child(2) { animation-delay: .4s; }
-.cli-demo .line:nth-child(3) { animation-delay: .7s; }
-.cli-demo .line:nth-child(4) { animation-delay: 1s; }
-.cli-demo .line:nth-child(5) { animation-delay: 1.3s; }
-.cli-demo .line:nth-child(6) { animation-delay: 1.6s; }
-.cli-demo .line:nth-child(7) { animation-delay: 1.9s; }
-@keyframes fadeIn { to { opacity: 1; } }
-
 /* CTA */
 .cta {
   text-align: center;
-  padding: 6rem 2rem;
+  padding: 6.5rem 2rem;
   position: relative;
 }
 .cta::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(34,211,167,.05) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(34,211,238,.04) 0%, transparent 70%);
 }
 .cta h2 {
   font-family: 'JetBrains Mono', monospace;
@@ -432,7 +604,29 @@ footer {
 }
 footer a { color: var(--fg2); text-decoration: none; }
 footer a:hover { color: var(--fg); }
-footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; }
+footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+
+/* Language switcher */
+.lang-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--fg2);
+  padding: .3rem .6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: .75rem;
+  font-weight: 600;
+  transition: all .2s;
+  letter-spacing: .03em;
+  min-width: 36px;
+  text-align: center;
+}
+.lang-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(34, 211, 238, 0.05);
+}
 
 /* Animations on scroll */
 .fade-up {
@@ -449,7 +643,7 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 @media (max-width: 768px) {
   nav .links .hide-mobile { display: none; }
   .features-grid { grid-template-columns: 1fr; }
-  .provider-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .provider-grid { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); }
   .hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
 }
 
@@ -463,9 +657,10 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 .stat {
   text-align: center;
   padding: 1.5rem;
-  background: var(--bg2);
+  background: rgba(9, 10, 18, 0.6);
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  backdrop-filter: blur(8px);
 }
 .stat-num {
   font-family: 'JetBrains Mono', monospace;
@@ -484,11 +679,17 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 
 <!-- Nav -->
 <nav>
-  <a href="#" class="logo"><img src="assets/clew-logo.svg" alt="Clew Code" style="height:28px;display:block"></a>
+  <a href="#" class="logo">
+    <img src="assets/clew-logo.svg" alt="Clew Code" style="height:28px;display:block">
+  </a>
   <div class="links">
-    <a href="#features">Features</a>
-    <a href="#providers">Providers</a>
-    <a href="#usage">Usage</a>
+    <a href="#features" data-i18n="nav.features">Features</a>
+    <a href="#providers" data-i18n="nav.providers">Providers</a>
+    <a href="#usage" data-i18n="nav.usage">Usage</a>
+    <a href="#works" data-i18n="nav.how-it-works">How it works</a>
+    <a href="#faq" data-i18n="nav.faq">FAQ</a>
+    <a href="/app/" class="hide-mobile" data-i18n="nav.dashboard">Dashboard</a>
+    <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">TH</button>
     <a href="https://github.com/ClewCode/ClewCode" class="hide-mobile">GitHub</a>
     <a href="https://github.com/ClewCode/ClewCode/wiki" class="btn btn-outline hide-mobile">Docs</a>
     <a href="https://github.com/ClewCode/ClewCode/releases" class="btn btn-primary hide-mobile" style="padding:.5rem 1rem">Download</a>
@@ -498,78 +699,76 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 <!-- Hero -->
 <div id="tsparticles" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></div>
 <section class="hero">
-  <span class="hero-badge">v0.3.2 &middot; 27 providers &middot; Open source</span>
-  <h1>Code with<br><span class="gradient">any AI, anywhere</span></h1>
-  <p>The open-source AI coding agent that works with 27 providers, remembers your preferences, coordinates across machines — all on your own hardware.</p>
+  <div class="hero-glow"></div>
+  <span class="hero-badge" data-i18n="hero.badge">v0.3.2 &middot; 27 providers &middot; Open source</span>
+  <h1 data-i18n="hero.title">Code with<br><span class="gradient">any AI, anywhere</span></h1>
+  <p data-i18n="hero.subtitle">The open-source AI coding agent that works with 27 providers, remembers your preferences, coordinates across machines — all on your own hardware.</p>
   <div class="hero-actions">
-    <a href="https://github.com/ClewCode/ClewCode/releases" class="btn btn-primary" style="padding:.75rem 1.75rem;font-size:1rem">Install Now</a>
-    <a href="https://github.com/ClewCode/ClewCode" class="btn btn-outline" style="padding:.75rem 1.75rem;font-size:1rem">View on GitHub &nearr;</a>
+    <a href="#usage" class="btn btn-primary" style="padding:.75rem 1.75rem;font-size:1rem" data-i18n="hero.install">Install Now</a>
+    <a href="https://github.com/ClewCode/ClewCode" class="btn btn-outline" style="padding:.75rem 1.75rem;font-size:1rem" data-i18n="hero.view-github">View on GitHub &nearr;</a>
   </div>
-  <div class="terminal">
-    <div class="terminal-bar">
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-title">clew</span>
-    </div>
-    <div class="terminal-body">
-      <div><span class="prompt">$</span> <span class="cmd">clew</span></div>
-      <div><span class="output">Pick a provider to get started:</span></div>
-      <div><span class="prompt">></span> <span class="cmd">/provider openai</span></div>
-      <div><span class="prompt">></span> <span class="cmd">/model gpt-5.5</span></div>
-      <div><span class="output">Ready. How can I help?</span></div>
-      <div><span class="prompt">></span> <span class="cmd">/peer discover</span></div>
-      <div><span class="output">Found 3 peers on LAN.<span class="cursor"></span></span></div>
-    </div>
-  </div>
+
 </section>
 
 <!-- Stats -->
 <div class="container fade-up">
   <div class="stats">
-    <div class="stat"><div class="stat-num">27</div><div class="stat-label">AI Providers</div></div>
-    <div class="stat"><div class="stat-num">75+</div><div class="stat-label">Built-in Tools</div></div>
-    <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Slash Commands</div></div>
-    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Platforms</div></div>
+    <div class="stat"><div class="stat-num">27</div><div class="stat-label" data-i18n="stat.providers">AI Providers</div></div>
+    <div class="stat"><div class="stat-num">75+</div><div class="stat-label" data-i18n="stat.tools">Built-in Tools</div></div>
+    <div class="stat"><div class="stat-num">100+</div><div class="stat-label" data-i18n="stat.commands">Slash Commands</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label" data-i18n="stat.platforms">Platforms</div></div>
   </div>
 </div>
 
 <!-- Features -->
 <section id="features">
   <div class="container fade-up">
-    <div class="section-label">Features</div>
-    <h2 class="section-title">Everything you need,<br>nothing you don't.</h2>
-    <p class="section-sub">A modern AI coding agent that puts you in control — your provider, your hardware, your workflow.</p>
+    <div class="section-label" data-i18n="features.label">Features</div>
+    <h2 class="section-title" data-i18n="features.title">Everything you need,<br>nothing you don't.</h2>
+    <p class="section-sub" data-i18n="features.subtitle">A modern AI coding agent that puts you in control — your provider, your hardware, your workflow.</p>
+    
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">~</div>
-        <h3>27 Providers</h3>
-        <p>OpenAI, DeepSeek, Groq, xAI, Mistral, Ollama (local), and 21 more. Switch mid-session with /model.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+        </div>
+        <h3 data-i18n="feature.0.title">27 Providers</h3>
+        <p data-i18n="feature.0.desc">OpenAI, DeepSeek, Groq, xAI, Mistral, Ollama (local), and 21 more. Switch mid-session with /model.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">*</div>
-        <h3>Persistent Memory</h3>
-        <p>MiMo-inspired SQLite store with importance ranking, confidence scoring, and cross-session persistence. Auto-consolidation via Dream + Distill.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
+        </div>
+        <h3 data-i18n="feature.1.title">Persistent Memory</h3>
+        <p data-i18n="feature.1.desc">MiMo-inspired SQLite store with importance ranking, confidence scoring, and cross-session persistence. Auto-consolidation via Dream + Distill.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">&gt;_</div>
-        <h3>75+ Built-in Tools</h3>
-        <p>Read, Write, Edit, Grep, Bash, Browser, MCP, peer coordination, ProcessPeer, MemoryFeedback, and more — all in one bundle.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        </div>
+        <h3 data-i18n="feature.2.title">75+ Built-in Tools</h3>
+        <p data-i18n="feature.2.desc">Read, Write, Edit, Grep, Bash, Browser, MCP, peer coordination, ProcessPeer, MemoryFeedback, and more — all in one bundle.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">&lt;&gt;</div>
-        <h3>LAN Peer Swarm</h3>
-        <p>Discover Clew instances on your network. Assign tasks, sync memory, and run swarm commands across all machines in parallel.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <h3 data-i18n="feature.3.title">LAN Peer Swarm</h3>
+        <p data-i18n="feature.3.desc">Discover Clew instances on your network. Assign tasks, sync memory, and run swarm commands across all machines in parallel.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">&#123; &#125;</div>
-        <h3>MCP + Plugins</h3>
-        <p>Connect external tools via Model Context Protocol. Extend with plugins, skills via SKILL.md, or hooks at every lifecycle stage.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <h3 data-i18n="feature.4.title">MCP + Plugins</h3>
+        <p data-i18n="feature.4.desc">Connect external tools via Model Context Protocol. Extend with plugins, skills via SKILL.md, or hooks at every lifecycle stage.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">#</div>
-        <h3>Goal Verification</h3>
-        <p>Track task completion with heuristic checks and independent LLM verification. Max Mode generates parallel candidates, picks the best.</p>
+        <div class="feature-icon">
+          <svg class="feature-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg>
+        </div>
+        <h3 data-i18n="feature.5.title">Goal Verification</h3>
+        <p data-i18n="feature.5.desc">Track task completion with heuristic checks and independent LLM verification. Max Mode generates parallel candidates, picks the best.</p>
       </div>
     </div>
   </div>
@@ -578,53 +777,94 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 <!-- Providers -->
 <section id="providers">
   <div class="container fade-up">
-    <div class="section-label">Providers</div>
-    <h2 class="section-title">Pick your poison.<br>Or switch anytime.</h2>
-    <p class="section-sub">Set one API key and go, or switch mid-session. Your workflow, your provider.</p>
-    <div class="provider-grid">
-      <div class="provider-chip">OpenAI</div>
-      <div class="provider-chip">Google Gemini</div>
-      <div class="provider-chip">DeepSeek</div>
-      <div class="provider-chip">Groq</div>
-      <div class="provider-chip">xAI (Grok)</div>
-      <div class="provider-chip">Mistral</div>
-      <div class="provider-chip">Cohere</div>
-      <div class="provider-chip">Perplexity</div>
-      <div class="provider-chip">Cerebras</div>
-      <div class="provider-chip">Moonshot (Kimi)</div>
-      <div class="provider-chip">Zhipu (GLM)</div>
-      <div class="provider-chip">NVIDIA NIM</div>
-      <div class="provider-chip">OpenRouter</div>
-      <div class="provider-chip">OpenCode</div>
-      <div class="provider-chip">KiloCode</div>
-      <div class="provider-chip">Ollama (Local)</div>
-      <div class="provider-chip">Together AI</div>
-      <div class="provider-chip">Fireworks AI</div>
-      <div class="provider-chip">Deep Infra</div>
-      <div class="provider-chip">SiliconFlow</div>
-      <div class="provider-chip">Hugging Face</div>
-      <div class="provider-chip">Poe</div>
-      <div class="provider-chip">DigitalOcean</div>
-      <div class="provider-chip">Cline</div>
-      <div class="provider-chip">Custom</div>
+    <div class="section-label" data-i18n="providers.label">Providers</div>
+    <h2 class="section-title" data-i18n="providers.title">Pick your poison.<br>Or switch anytime.</h2>
+    <p class="section-sub" data-i18n="providers.subtitle">Set one API key and go, or switch mid-session. Your workflow, your provider.</p>
+    
+    <div class="provider-filters">
+      <button class="filter-chip active" onclick="filterProviders('all')" data-i18n="providers.filter-all">All (27)</button>
+      <button class="filter-chip" onclick="filterProviders('cloud')" data-i18n="providers.filter-cloud">Cloud APIs</button>
+      <button class="filter-chip" onclick="filterProviders('local')" data-i18n="providers.filter-local">Local & Self-Hosted</button>
+      <button class="filter-chip" onclick="filterProviders('popular')" data-i18n="providers.filter-popular">Popular</button>
+    </div>
+
+    <div class="provider-search-box">
+      <input type="text" id="provider-search" placeholder="Search provider..." onkeyup="searchProviders()" data-i18n-placeholder="providers.search" />
+    </div>
+
+    <div class="provider-grid" id="provider-grid">
+      <div class="provider-chip" data-name="openai" data-category="cloud popular">OpenAI</div>
+      <div class="provider-chip" data-name="google gemini" data-category="cloud popular">Google Gemini</div>
+      <div class="provider-chip" data-name="deepseek" data-category="cloud local popular">DeepSeek</div>
+      <div class="provider-chip" data-name="groq" data-category="cloud popular">Groq</div>
+      <div class="provider-chip" data-name="xai grok" data-category="cloud">xAI (Grok)</div>
+      <div class="provider-chip" data-name="mistral" data-category="cloud">Mistral</div>
+      <div class="provider-chip" data-name="cohere" data-category="cloud">Cohere</div>
+      <div class="provider-chip" data-name="perplexity" data-category="cloud">Perplexity</div>
+      <div class="provider-chip" data-name="cerebras" data-category="cloud">Cerebras</div>
+      <div class="provider-chip" data-name="moonshot kimi" data-category="cloud">Moonshot (Kimi)</div>
+      <div class="provider-chip" data-name="zhipu glm" data-category="cloud">Zhipu (GLM)</div>
+      <div class="provider-chip" data-name="nvidia nim" data-category="cloud local">NVIDIA NIM</div>
+      <div class="provider-chip" data-name="openrouter" data-category="cloud popular">OpenRouter</div>
+      <div class="provider-chip" data-name="opencode" data-category="cloud">OpenCode</div>
+      <div class="provider-chip" data-name="kilocode" data-category="cloud">KiloCode</div>
+      <div class="provider-chip" data-name="ollama local" data-category="local popular">Ollama (Local)</div>
+      <div class="provider-chip" data-name="together ai" data-category="cloud">Together AI</div>
+      <div class="provider-chip" data-name="fireworks ai" data-category="cloud">Fireworks AI</div>
+      <div class="provider-chip" data-name="deep infra" data-category="cloud">Deep Infra</div>
+      <div class="provider-chip" data-name="siliconflow" data-category="cloud">SiliconFlow</div>
+      <div class="provider-chip" data-name="hugging face" data-category="cloud local">Hugging Face</div>
+      <div class="provider-chip" data-name="poe" data-category="cloud">Poe</div>
+      <div class="provider-chip" data-name="digitalocean" data-category="cloud">DigitalOcean</div>
+      <div class="provider-chip" data-name="cline" data-category="local">Cline</div>
+      <div class="provider-chip" data-name="custom" data-category="local">Custom API Gateway</div>
     </div>
   </div>
 </section>
 
-<!-- Usage -->
+<!-- Usage & Installation -->
 <section id="usage">
   <div class="container fade-up">
-    <div class="section-label">Quick Start</div>
-    <h2 class="section-title">Up and running<br>in one command.</h2>
-    <p class="section-sub">Install, run, and start coding. No cloud sign-up required.</p>
-    <div class="cli-demo">
-      <div class="line"><span style="color:var(--fg2)"># Install (macOS / Linux)</span></div>
-      <div class="line"><span style="color:var(--accent)">$</span> curl -fsSL https://raw.githubusercontent.com/ClewCode/ClewCode/main/scripts/install.sh | bash</div>
-      <div class="line"><span style="color:var(--fg2)"># Or with npm</span></div>
-      <div class="line"><span style="color:var(--accent)">$</span> npm install -g clew-code</div>
-      <div class="line"><span style="color:var(--fg2)"># Run in any project</span></div>
-      <div class="line"><span style="color:var(--accent)">$</span> cd my-project</div>
-      <div class="line"><span style="color:var(--accent)">$</span> clew</div>
+    <div class="section-label" data-i18n="install.label">Quick Start</div>
+    <h2 class="section-title" data-i18n="install.title">Up and running<br>in one command.</h2>
+    <p class="section-sub" data-i18n="install.subtitle">Install, run, and start coding. No cloud sign-up required.</p>
+    
+    <div class="install-widget">
+      <div class="install-tabs">
+        <button class="install-tab-btn active" onclick="switchInstallTab('mac-linux')" data-i18n="install.tab-mac">macOS / Linux</button>
+        <button class="install-tab-btn" onclick="switchInstallTab('windows')" data-i18n="install.tab-win">Windows</button>
+        <button class="install-tab-btn" onclick="switchInstallTab('npm')" data-i18n="install.tab-npm">NPM (Cross-platform)</button>
+      </div>
+      
+      <div class="install-panel active" id="panel-mac-linux">
+        <div class="code-wrapper">
+          <code id="code-mac-linux">curl -fsSL https://raw.githubusercontent.com/ClewCode/ClewCode/main/scripts/install.sh | bash</code>
+          <button class="copy-btn" onclick="copyInstallText('code-mac-linux', this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="install.copy">Copy</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="install-panel" id="panel-windows">
+        <div class="code-wrapper">
+          <code id="code-windows">irm https://raw.githubusercontent.com/ClewCode/ClewCode/main/scripts/install.ps1 | iex</code>
+          <button class="copy-btn" onclick="copyInstallText('code-windows', this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="install.copy">Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="install-panel" id="panel-npm">
+        <div class="code-wrapper">
+          <code id="code-npm">npm install -g clew-code</code>
+          <button class="copy-btn" onclick="copyInstallText('code-npm', this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="install.copy">Copy</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -632,25 +872,96 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 <!-- How it works -->
 <section id="works">
   <div class="container fade-up">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">Simple by design.</h2>
-    <p class="section-sub">Four execution layers, one coherent system.</p>
+    <div class="section-label" data-i18n="works.label">How it works</div>
+    <h2 class="section-title" data-i18n="works.title">Simple by design.</h2>
+    <p class="section-sub" data-i18n="works.subtitle">Four execution layers, one coherent system.</p>
     <div class="steps">
       <div class="step">
-        <h3>Agent</h3>
-        <p>An AI worker with a prompt, model, tools, and permissions. The main chat session is the primary agent. Extend with custom agents.</p>
+        <h3 data-i18n="works.step-0.title">Agent</h3>
+        <p data-i18n="works.step-0.desc">An AI worker with a prompt, model, tools, and permissions. The main chat session is the primary agent. Extend with custom agents.</p>
       </div>
       <div class="step">
-        <h3>Subagent</h3>
-        <p>Short-lived child agents for parallel exploration, test triage, or review. The built-in Explore agent is read-only and safe.</p>
+        <h3 data-i18n="works.step-1.title">Subagent</h3>
+        <p data-i18n="works.step-1.desc">Short-lived child agents for parallel exploration, test triage, or review. The built-in Explore agent is read-only and safe.</p>
       </div>
       <div class="step">
-        <h3>LAN Peer</h3>
-        <p>Network of Clew instances on your LAN. Discover, message, assign tasks, and run swarm commands across machines.</p>
+        <h3 data-i18n="works.step-2.title">LAN Peer</h3>
+        <p data-i18n="works.step-2.desc">Network of Clew instances on your LAN. Discover, message, assign tasks, and run swarm commands across machines.</p>
       </div>
       <div class="step">
-        <h3>Process Peer</h3>
-        <p>Delegate to external workers like Codex via ProcessPeer. Personal profile turns Clew into a command center.</p>
+        <h3 data-i18n="works.step-3.title">Process Peer</h3>
+        <p data-i18n="works.step-3.desc">Delegate to external workers like Codex via ProcessPeer. Personal profile turns Clew into a command center.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Accordion -->
+<section id="faq">
+  <div class="container fade-up">
+    <div class="section-label" data-i18n="faq.label">FAQ</div>
+    <h2 class="section-title" data-i18n="faq.title">Frequently Asked<br>Questions</h2>
+    <p class="section-sub" data-i18n="faq.subtitle">Everything you need to know about Clew Code's internals and security.</p>
+    
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq.q-0">Is Clew Code completely free and open-source?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p data-i18n="faq.a-0">Yes. Clew Code is licensed under GPL-3.0 and is completely free to self-host. Since it connects directly to your own API providers (like OpenAI or DeepSeek) or local endpoints (like Ollama), you only pay for the API credits you actually consume.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq.q-1">How does the LAN Peer Swarm work?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p data-i18n="faq.a-1">Clew Code uses mdns (Multicast DNS) to discover other running Clew instances on your local area network (LAN). Once connected, they form a secured peer network where tasks can be shared, models can be queried in parallel, and context can be replicated across dev machines.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq.q-2">What is the MiMo-inspired Memory?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p data-i18n="faq.a-2">It's a persistent agent memory system backed by SQLite. Clew scores facts by importance and confidence. During quiet periods, Clew runs background routines (Dream & Distill) to merge overlapping memories, prune outdated ones, and build optimized semantic indexes for fast retrieval.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq.q-3">Can I run Clew Code fully offline?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p data-i18n="faq.a-3">Yes. By configuring Ollama or Llama.cpp as your provider, Clew Code works 100% offline. All built-in tools (file viewing, writing, grep, terminal runs) run locally on your sandbox without sending any code or context to remote servers.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq.q-4">How secure is the tool execution?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p data-i18n="faq.a-4">Clew Code prompts for permission before running any read, write, or terminal execution. You can fine-tune auto-approve rules per workspace, ensuring that commands only run once you've reviewed them.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -658,11 +969,11 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
 
 <!-- CTA -->
 <section class="cta">
-  <h2>Ready to code<br>on your terms?</h2>
-  <p>Open source. Local-first. 27 providers. One tool.</p>
+  <h2 data-i18n="cta.title">Ready to code<br>on your terms?</h2>
+  <p data-i18n="cta.subtitle">Open source. Local-first. 27 providers. One tool.</p>
   <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1">
-    <a href="https://github.com/ClewCode/ClewCode/releases" class="btn btn-primary" style="padding:.75rem 2rem;font-size:1rem">Install Clew Code</a>
-    <a href="https://github.com/ClewCode/ClewCode" class="btn btn-outline" style="padding:.75rem 2rem;font-size:1rem">Star on GitHub &nearr;</a>
+    <a href="https://github.com/ClewCode/ClewCode/releases" class="btn btn-primary" style="padding:.75rem 2rem;font-size:1rem" data-i18n="cta.install">Install Clew Code</a>
+    <a href="https://github.com/ClewCode/ClewCode" class="btn btn-outline" style="padding:.75rem 2rem;font-size:1rem" data-i18n="cta.star">Star on GitHub &nearr;</a>
   </div>
 </section>
 
@@ -676,7 +987,7 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
     <a href="https://github.com/ClewCode/ClewCode/wiki/Terms-of-Service">Terms</a>
     <a href="https://github.com/ClewCode/ClewCode/wiki/Privacy-Policy">Privacy</a>
   </div>
-  <p>Clew Code &mdash; GPL-3.0 Licensed</p>
+  <p data-i18n="footer.license">Clew Code &mdash; GPL-3.0 Licensed</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.8.1/tsparticles.bundle.min.js"></script>
@@ -686,11 +997,11 @@ tsParticles.load('tsparticles', {
   fpsLimit: 60,
   background: { color: 'transparent' },
   particles: {
-    number: { value: 80, density: { enable: true } },
-    color: { value: ['#a855f7', '#c084fc', '#7c3aed'] },
+    number: { value: 60, density: { enable: true } },
+    color: { value: ['#22d3ee', '#a855f7', '#4f46e5'] },
     shape: { type: 'circle' },
     opacity: {
-      value: { min: 0.1, max: 0.3 },
+      value: { min: 0.1, max: 0.25 },
       animation: { enable: true, speed: 0.5 }
     },
     size: {
@@ -699,14 +1010,14 @@ tsParticles.load('tsparticles', {
     },
     links: {
       enable: true,
-      color: '#a855f7',
-      opacity: 0.08,
+      color: '#22d3ee',
+      opacity: 0.05,
       distance: 150,
       width: 1
     },
     move: {
       enable: true,
-      speed: 0.3,
+      speed: 0.25,
       direction: 'none',
       random: true,
       outModes: 'bounce'
@@ -720,7 +1031,7 @@ tsParticles.load('tsparticles', {
     modes: {
       grab: {
         distance: 140,
-        links: { opacity: 0.15, color: '#c084fc' }
+        links: { opacity: 0.1, color: '#a855f7' }
       }
     }
   },
@@ -735,39 +1046,290 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: .1 });
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-// Typewriter effect for terminal
-const typeLine = (el, text, speed = 30) => {
-  let i = 0;
-  const fn = () => {
-    if (i < text.length) {
-      el.textContent += text[i++];
-      setTimeout(fn, speed);
-    }
-  };
-  fn();
-};
 
-// Check for reduced motion preference
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const lastLine = document.querySelector('.terminal-body .cursor');
-  if (lastLine) {
+// Copy Installation Text
+function copyInstallText(elementId, btn) {
+  const codeText = document.getElementById(elementId).innerText;
+  navigator.clipboard.writeText(codeText).then(() => {
+    const textSpan = btn.querySelector('span');
+    const originalText = textSpan.innerText;
+    textSpan.innerText = 'Copied!';
+    btn.classList.add('copied');
     setTimeout(() => {
-      const text = 'Found 3 peers on LAN.';
-      const parent = lastLine.parentElement;
-      lastLine.remove();
-      const span = document.createElement('span');
-      span.className = 'output';
-      parent.appendChild(span);
-      typeLine(span, text, 25);
-      // Add cursor after typing
-      setTimeout(() => {
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        span.parentElement.appendChild(cursor);
-      }, text.length * 25 + 100);
-    }, 2500);
+      textSpan.innerText = originalText;
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Switch Installation Tab
+function switchInstallTab(tabId) {
+  document.querySelectorAll('.install-tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.install-panel').forEach(panel => panel.classList.remove('active'));
+  
+  const targetBtn = Array.from(document.querySelectorAll('.install-tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+  if (targetBtn) targetBtn.classList.add('active');
+  
+  const targetPanel = document.getElementById(`panel-${tabId}`);
+  if (targetPanel) targetPanel.classList.add('active');
+}
+
+// Filter Providers Grid
+function filterProviders(category) {
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  const activeChip = Array.from(document.querySelectorAll('.filter-chip')).find(chip => chip.getAttribute('onclick').includes(category));
+  if (activeChip) activeChip.classList.add('active');
+  
+  document.getElementById('provider-search').value = '';
+  
+  document.querySelectorAll('#provider-grid .provider-chip').forEach(chip => {
+    const categories = chip.getAttribute('data-category').split(' ');
+    if (category === 'all' || categories.includes(category)) {
+      chip.classList.remove('hidden');
+    } else {
+      chip.classList.add('hidden');
+    }
+  });
+}
+
+// Search Providers Grid
+function searchProviders() {
+  const query = document.getElementById('provider-search').value.toLowerCase().trim();
+  
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  const allChip = Array.from(document.querySelectorAll('.filter-chip')).find(chip => chip.getAttribute('onclick').includes('all'));
+  if (allChip) allChip.classList.add('active');
+  
+  document.querySelectorAll('#provider-grid .provider-chip').forEach(chip => {
+    const name = chip.getAttribute('data-name').toLowerCase();
+    if (name.includes(query)) {
+      chip.classList.remove('hidden');
+    } else {
+      chip.classList.add('hidden');
+    }
+  });
+}
+
+// FAQ Accordion Toggle
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isActive = item.classList.contains('active');
+
+  document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+
+  if (!isActive) {
+    item.classList.add('active');
   }
 }
+
+// ============ I18N (EN/TH) ============
+const i18n = {
+  en: {
+    'nav.features': 'Features',
+    'nav.providers': 'Providers',
+    'nav.usage': 'Usage',
+    'nav.how-it-works': 'How it works',
+    'nav.faq': 'FAQ',
+    'nav.dashboard': 'Dashboard',
+    'hero.badge': 'v0.3.2 · 27 providers · Open source',
+    'hero.title': 'Code with<br><span class="gradient">any AI, anywhere</span>',
+    'hero.subtitle': 'The open-source AI coding agent that works with 27 providers, remembers your preferences, coordinates across machines — all on your own hardware.',
+    'hero.install': 'Install Now',
+    'hero.view-github': 'View on GitHub ↗',
+    'stat.providers': 'AI Providers',
+    'stat.tools': 'Built-in Tools',
+    'stat.commands': 'Slash Commands',
+    'stat.platforms': 'Platforms',
+    'features.label': 'Features',
+    'features.title': "Everything you need,<br>nothing you don't.",
+    'features.subtitle': 'A modern AI coding agent that puts you in control — your provider, your hardware, your workflow.',
+    'feature.0.title': '27 Providers',
+    'feature.0.desc': 'OpenAI, DeepSeek, Groq, xAI, Mistral, Ollama (local), and 21 more. Switch mid-session with /model.',
+    'feature.1.title': 'Persistent Memory',
+    'feature.1.desc': 'MiMo-inspired SQLite store with importance ranking, confidence scoring, and cross-session persistence. Auto-consolidation via Dream + Distill.',
+    'feature.2.title': '75+ Built-in Tools',
+    'feature.2.desc': 'Read, Write, Edit, Grep, Bash, Browser, MCP, peer coordination, ProcessPeer, MemoryFeedback, and more — all in one bundle.',
+    'feature.3.title': 'LAN Peer Swarm',
+    'feature.3.desc': 'Discover Clew instances on your network. Assign tasks, sync memory, and run swarm commands across all machines in parallel.',
+    'feature.4.title': 'MCP + Plugins',
+    'feature.4.desc': 'Connect external tools via Model Context Protocol. Extend with plugins, skills via SKILL.md, or hooks at every lifecycle stage.',
+    'feature.5.title': 'Goal Verification',
+    'feature.5.desc': 'Track task completion with heuristic checks and independent LLM verification. Max Mode generates parallel candidates, picks the best.',
+    'providers.label': 'Providers',
+    'providers.title': 'Pick your poison.<br>Or switch anytime.',
+    'providers.subtitle': 'Set one API key and go, or switch mid-session. Your workflow, your provider.',
+    'providers.filter-all': 'All (27)',
+    'providers.filter-cloud': 'Cloud APIs',
+    'providers.filter-local': 'Local & Self-Hosted',
+    'providers.filter-popular': 'Popular',
+    'providers.search': 'Search provider...',
+    'install.label': 'Quick Start',
+    'install.title': 'Up and running<br>in one command.',
+    'install.subtitle': 'Install, run, and start coding. No cloud sign-up required.',
+    'install.tab-mac': 'macOS / Linux',
+    'install.tab-win': 'Windows',
+    'install.tab-npm': 'NPM (Cross-platform)',
+    'install.copy': 'Copy',
+    'works.label': 'How it works',
+    'works.title': 'Simple by design.',
+    'works.subtitle': 'Four execution layers, one coherent system.',
+    'works.step-0.title': 'Agent',
+    'works.step-0.desc': 'An AI worker with a prompt, model, tools, and permissions. The main chat session is the primary agent. Extend with custom agents.',
+    'works.step-1.title': 'Subagent',
+    'works.step-1.desc': 'Short-lived child agents for parallel exploration, test triage, or review. The built-in Explore agent is read-only and safe.',
+    'works.step-2.title': 'LAN Peer',
+    'works.step-2.desc': 'Network of Clew instances on your LAN. Discover, message, assign tasks, and run swarm commands across machines.',
+    'works.step-3.title': 'Process Peer',
+    'works.step-3.desc': 'Delegate to external workers like Codex via ProcessPeer. Personal profile turns Clew into a command center.',
+    'faq.label': 'FAQ',
+    'faq.title': 'Frequently Asked<br>Questions',
+    'faq.subtitle': "Everything you need to know about Clew Code's internals and security.",
+    'faq.q-0': 'Is Clew Code completely free and open-source?',
+    'faq.a-0': 'Yes. Clew Code is licensed under GPL-3.0 and is completely free to self-host. Since it connects directly to your own API providers (like OpenAI or DeepSeek) or local endpoints (like Ollama), you only pay for the API credits you actually consume.',
+    'faq.q-1': 'How does the LAN Peer Swarm work?',
+    'faq.a-1': 'Clew Code uses mdns (Multicast DNS) to discover other running Clew instances on your local area network (LAN). Once connected, they form a secured peer network where tasks can be shared, models can be queried in parallel, and context can be replicated across dev machines.',
+    'faq.q-2': 'What is the MiMo-inspired Memory?',
+    'faq.a-2': "It's a persistent agent memory system backed by SQLite. Clew scores facts by importance and confidence. During quiet periods, Clew runs background routines (Dream & Distill) to merge overlapping memories, prune outdated ones, and build optimized semantic indexes for fast retrieval.",
+    'faq.q-3': 'Can I run Clew Code fully offline?',
+    'faq.a-3': 'Yes. By configuring Ollama or Llama.cpp as your provider, Clew Code works 100% offline. All built-in tools (file viewing, writing, grep, terminal runs) run locally on your sandbox without sending any code or context to remote servers.',
+    'faq.q-4': 'How secure is the tool execution?',
+    'faq.a-4': "Clew Code prompts for permission before running any read, write, or terminal execution. You can fine-tune auto-approve rules per workspace, ensuring that commands only run once you've reviewed them.",
+    'cta.title': 'Ready to code<br>on your terms?',
+    'cta.subtitle': 'Open source. Local-first. 27 providers. One tool.',
+    'cta.install': 'Install Clew Code',
+    'cta.star': 'Star on GitHub ↗',
+    'footer.license': 'Clew Code — GPL-3.0 Licensed',
+    'copied': 'Copied!',
+  },
+  th: {
+    'nav.features': 'ความสามารถ',
+    'nav.providers': 'ผู้ให้บริการ',
+    'nav.usage': 'การใช้งาน',
+    'nav.how-it-works': 'วิธีการทำงาน',
+    'nav.faq': 'คำถามพบบ่อย',
+    'nav.dashboard': 'แดชบอร์ด',
+    'hero.badge': 'v0.3.2 · 27 ผู้ให้บริการ · โอเพนซอร์ส',
+    'hero.title': 'เขียนโค้ดกับ<br><span class="gradient">AI ใดก็ได้ ทุกที่</span>',
+    'hero.subtitle': 'เอเจนต์เขียนโค้ด AI โอเพนซอร์สที่ทำงานกับผู้ให้บริการ 27 ราย จดจำความชอบของคุณ ประสานงานข้ามเครื่อง — ทั้งหมดบนฮาร์ดแวร์ของคุณเอง',
+    'hero.install': 'ติดตั้งเลย',
+    'hero.view-github': 'ดูบน GitHub ↗',
+    'stat.providers': 'ผู้ให้บริการ AI',
+    'stat.tools': 'เครื่องมือในตัว',
+    'stat.commands': 'คำสั่ง Slash',
+    'stat.platforms': 'แพลตฟอร์ม',
+    'features.label': 'ความสามารถ',
+    'features.title': 'ครบทุกสิ่งที่คุณต้องการ<br>ไม่มีอะไรฟุ่มเฟือย',
+    'features.subtitle': 'เอเจนต์เขียนโค้ด AI สมัยใหม่ที่ให้คุณควบคุม — ผู้ให้บริการของคุณ ฮาร์ดแวร์ของคุณ เวิร์กโฟลว์ของคุณ',
+    'feature.0.title': '27 ผู้ให้บริการ',
+    'feature.0.desc': 'OpenAI, DeepSeek, Groq, xAI, Mistral, Ollama (ท้องถิ่น) และอีก 21 ราย เปลี่ยนได้ระหว่างเซสชันด้วย /model',
+    'feature.1.title': 'หน่วยความจำถาวร',
+    'feature.1.desc': 'ระบบ SQLite แรงบันดาลใจจาก MiMo พร้อมจัดอันดับความสำคัญ คะแนนความเชื่อมั่น และข้ามเซสชัน ปรับปรุงอัตโนมัติด้วย Dream + Distill',
+    'feature.2.title': 'เครื่องมือ 75+',
+    'feature.2.desc': 'Read, Write, Edit, Grep, Bash, Browser, MCP, ประสานงานเพื่อน, ProcessPeer, MemoryFeedback และอื่น ๆ อีกมากมายในที่เดียว',
+    'feature.3.title': 'ฝูงเพื่อน LAN',
+    'feature.3.desc': 'ค้นหา Clew instances ในเครือข่าย มอบหมายงาน ซิงก์ความจำ และรัน swarm commands ข้ามทุกเครื่องแบบขนาน',
+    'feature.4.title': 'MCP + ปลั๊กอิน',
+    'feature.4.desc': 'เชื่อมต่อเครื่องมือภายนอกผ่าน Model Context Protocol ขยายด้วยปลั๊กอิน สกิลด้วย SKILL.md หรือฮุคในทุกขั้นตอน',
+    'feature.5.title': 'ตรวจสอบเป้าหมาย',
+    'feature.5.desc': 'ติดตามความสำเร็จของงานด้วย heuristic และ LLM ตรวจสอบอิสระ Max Mode สร้างตัวเลือกขนานแล้วเลือกอันที่ดีที่สุด',
+    'providers.label': 'ผู้ให้บริการ',
+    'providers.title': 'เลือกได้ตามใจ<br>หรือสลับเมื่อไหร่ก็ได้',
+    'providers.subtitle': 'ตั้งค่า API key เดียวแล้วเริ่ม หรือเปลี่ยนระหว่างเซสชัน เวิร์กโฟลว์คุณ ผู้ให้บริการคุณ',
+    'providers.filter-all': 'ทั้งหมด (27)',
+    'providers.filter-cloud': 'API คลาวด์',
+    'providers.filter-local': 'ท้องถิ่น',
+    'providers.filter-popular': 'ยอดนิยม',
+    'providers.search': 'ค้นหาผู้ให้บริการ...',
+    'install.label': 'เริ่มต้นด่วน',
+    'install.title': 'พร้อมใช้งาน<br>ในคำสั่งเดียว',
+    'install.subtitle': 'ติดตั้ง รัน และเริ่มเขียนโค้ด ไม่ต้องสมัครคลาวด์',
+    'install.tab-mac': 'macOS / Linux',
+    'install.tab-win': 'Windows',
+    'install.tab-npm': 'NPM (ทุกแพลตฟอร์ม)',
+    'install.copy': 'คัดลอก',
+    'works.label': 'วิธีการทำงาน',
+    'works.title': 'เรียบง่ายโดยการออกแบบ',
+    'works.subtitle': 'สี่ชั้นการทำงาน หนึ่งระบบที่สอดคล้องกัน',
+    'works.step-0.title': 'เอเจนต์',
+    'works.step-0.desc': 'ผู้ปฏิบัติงาน AI พร้อมพรอมต์ โมเดล เครื่องมือ และสิทธิ์ เซสชันหลักคือเอเจนต์หลัก ขยายด้วยเอเจนต์แบบกำหนดเอง',
+    'works.step-1.title': 'ซับเอเจนต์',
+    'works.step-1.desc': 'เอเจนต์ย่อยอายุสั้นสำหรับการสำรวจแบบขนาน ทดสอบ หรือตรวจสอบ เอเจนต์ Explore ในตัวอ่านอย่างเดียวและปลอดภัย',
+    'works.step-2.title': 'เพื่อน LAN',
+    'works.step-2.desc': 'เครือข่าย Clew instances ใน LAN ค้นหา ส่งข้อความ มอบหมายงาน และรัน swarm commands ข้ามเครื่อง',
+    'works.step-3.title': 'โพรเซสเพียร์',
+    'works.step-3.desc': 'มอบหมายให้ผู้ทำงานภายนอกอย่าง Codex ผ่าน ProcessPeer โปรไฟล์ส่วนบุคคลเปลี่ยน Clew เป็นศูนย์บัญชาการ',
+    'faq.label': 'คำถามพบบ่อย',
+    'faq.title': 'คำถามที่<br>พบบ่อย',
+    'faq.subtitle': 'ทุกสิ่งที่คุณต้องรู้เกี่ยวกับ Clew Code',
+    'faq.q-0': 'Clew Code ฟรีและโอเพนซอร์สหรือไม่?',
+    'faq.a-0': 'ใช่ Clew Code ใช้สัญญาอนุญาต GPL-3.0 และฟรีในการโฮสต์เอง เนื่องจากเชื่อมต่อโดยตรงกับผู้ให้บริการ API ของคุณ (เช่น OpenAI หรือ DeepSeek) หรือปลายทางท้องถิ่น (เช่น Ollama) คุณจึงจ่ายเฉพาะเครดิต API ที่ใช้จริงเท่านั้น',
+    'faq.q-1': 'ฝูงเพื่อน LAN ทำงานอย่างไร?',
+    'faq.a-1': 'Clew Code ใช้ mdns (Multicast DNS) เพื่อค้นหา Clew instances อื่นบนเครือข่ายท้องถิ่นของคุณ เมื่อเชื่อมต่อแล้ว พวกมันจะสร้างเครือข่ายเพื่อนที่ปลอดภัยซึ่งสามารถแชร์งาน สอบถามโมเดลแบบขนาน และทำซ้ำบริบทข้ามเครื่องพัฒนาได้',
+    'faq.q-2': 'หน่วยความจำแบบ MiMo คืออะไร?',
+    'faq.a-2': 'มันคือระบบความจำเอเจนต์ถาวรที่ใช้ SQLite Clew ให้คะแนนข้อเท็จจริงตามความสำคัญและความเชื่อมั่น ในช่วงเวลาที่เงียบ Clew จะรันกระบวนการเบื้องหลัง (Dream & Distill) เพื่อรวมความจำที่ซ้อนทับกัน ตัดความจำที่ล้าสมัย และสร้างดัชนีความหมายที่เหมาะสำหรับการค้นหาที่รวดเร็ว',
+    'faq.q-3': 'ใช้ Clew Code แบบออฟไลน์ได้ไหม?',
+    'faq.a-3': 'ได้ โดยกำหนดค่า Ollama หรือ Llama.cpp เป็นผู้ให้บริการ Clew Code ทำงาน 100% ออฟไลน์ เครื่องมือในตัวทั้งหมด (ดูไฟล์ เขียน grep รันคำสั่ง) ทำงานในเครื่องของคุณโดยไม่ส่งโค้ดหรือบริบทไปยังเซิร์ฟเวอร์ระยะไกล',
+    'faq.q-4': 'เครื่องมือทำงานปลอดภัยแค่ไหน?',
+    'faq.a-4': 'Clew Code จะขออนุญาตก่อนรันการอ่าน เขียน หรือรันคำสั่งทุกครั้ง คุณสามารถปรับแต่งกฎอนุมัติอัตโนมัติต่อเวิร์กสเปซเพื่อให้คำสั่งรันเมื่อคุณตรวจสอบแล้วเท่านั้น',
+    'cta.title': 'พร้อมเขียนโค้ด<br>ในแบบของคุณหรือยัง?',
+    'cta.subtitle': 'โอเพนซอร์ส · ทำงานในเครื่อง · 27 ผู้ให้บริการ · เครื่องมือเดียว',
+    'cta.install': 'ติดตั้ง Clew Code',
+    'cta.star': 'กดดาวบน GitHub ↗',
+    'footer.license': 'Clew Code — สัญญาอนุญาต GPL-3.0',
+    'copied': 'คัดลอกแล้ว!',
+  }
+};
+
+function applyLanguage(lang) {
+  const t = i18n[lang] || i18n.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.innerHTML = t[key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) {
+      el.placeholder = t[key];
+    }
+  });
+  // Update copied button text in script
+  const t2 = i18n[lang] || i18n.en;
+  document.querySelectorAll('.copy-btn.copied span').forEach(span => {
+    span.textContent = t2['copied'] || 'Copied!';
+  });
+  document.getElementById('lang-toggle').textContent = lang === 'th' ? 'EN' : 'TH';
+  localStorage.setItem('clew_lang', lang);
+}
+
+let currentLang = localStorage.getItem('clew_lang') || 'en';
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'th' : 'en';
+  applyLanguage(currentLang);
+}
+
+// Override copyInstallText to use i18n
+const _origCopy = window.copyInstallText;
+window.copyInstallText = function(elementId, btn) {
+  const codeText = document.getElementById(elementId).innerText;
+  navigator.clipboard.writeText(codeText).then(() => {
+    const textSpan = btn.querySelector('span');
+    const lang = currentLang;
+    const t = i18n[lang] || i18n.en;
+    textSpan.innerText = t['copied'] || 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      const t2 = i18n[currentLang] || i18n.en;
+      textSpan.innerText = t2['install.copy'] || 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+};
+
+// Apply saved language on load
+applyLanguage(currentLang);
 </script>
 </body>
 </html>
