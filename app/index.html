@@ -7,11 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f; --bg2: #12121a; --bg3: #1a1a28;
-  --fg: #e4e4e7; --fg2: #a1a1aa; --fg3: #6b6b80;
-  --accent: #a855f7; --accent2: #c084fc;
-  --purple-dim: #3b0764; --line: #27272a;
-  --radius: 10px; --red: #ef4444; --green: #22c55e; --yellow: #f59e0b;
+  --bg: #08080f; --bg2: #0f0f1a; --bg3: #18182a;
+  --fg: #e4e4e7; --fg2: #9494a8; --fg3: #5c5c78;
+  --accent: #a855f7; --accent2: #c084fc; --accent-glow: rgba(168,85,247,.15);
+  --cyan: #06b6d4; --cyan-dim: rgba(6,182,212,.12);
+  --purple-dim: #2d0a4e; --line: #1e1e30;
+  --radius: 12px; --radius-sm: 8px;
+  --red: #ef4444; --green: #22c55e; --yellow: #f59e0b; --orange: #f97316;
   --mono: 'JetBrains Mono', monospace;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -20,11 +22,16 @@ body {
   background: var(--bg); color: var(--fg);
   -webkit-font-smoothing: antialiased;
 }
+@keyframes shimmer { 0%{opacity:.4} 50%{opacity:.8} 100%{opacity:.4} }
+@keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse-dot { 0%{box-shadow:0 0 0 0 var(--dot-color,rgba(34,197,94,.4))} 70%{box-shadow:0 0 0 6px var(--dot-color,rgba(34,197,94,0))} 100%{box-shadow:0 0 0 0 var(--dot-color,rgba(34,197,94,0))} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes gradientOrb { 0%{transform:translate(-50%,-50%) rotate(0deg) scale(1)} 50%{transform:translate(-30%,-40%) rotate(180deg) scale(1.2)} 100%{transform:translate(-50%,-50%) rotate(360deg) scale(1)} }
 .app { display: flex; min-height: 100vh; }
 
 .sidebar {
-  width: 260px; background: var(--bg2); border-right: 1px solid var(--line);
-  padding: 1.5rem; display: flex; flex-direction: column; flex-shrink: 0;
+  width: 250px; background: var(--bg2); border-right: 1px solid var(--line);
+  padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-shrink: 0;
 }
 .sidebar .logo { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.2rem; color: var(--accent); margin-bottom: 2rem; text-decoration: none; display: block; }
 .sidebar .logo span { color: var(--fg); }
@@ -112,6 +119,51 @@ input, select { font-family: inherit; }
 .admin-tab.active { background: var(--purple-dim); color: var(--accent); border-color: var(--accent); }
 .admin-section { display: none; }
 .admin-section.active { display: block; }
+
+/* Dashboard overview */
+.dash-bg { position:relative; }
+.dash-bg::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 600px 400px at 20% 30%,rgba(168,85,247,.06),transparent),radial-gradient(ellipse 400px 300px at 80% 60%,rgba(6,182,212,.04),transparent); pointer-events:none; }
+.dash-grid { position:relative; z-index:1; }
+.stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; position:relative; z-index:2; }
+.dash-card { background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; position:relative; overflow:hidden; transition:.3s; animation:slideUp .5s ease backwards; }
+.dash-card:nth-child(1) { animation-delay:.05s; }
+.dash-card:nth-child(2) { animation-delay:.12s; }
+.dash-card:nth-child(3) { animation-delay:.19s; }
+.dash-card:nth-child(4) { animation-delay:.26s; }
+.dash-card:hover { border-color:rgba(168,85,247,.3); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.3); }
+.dash-card .icon { font-size:1.3rem; margin-bottom:.4rem; display:block; }
+.dash-card .stat-label { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--fg3); margin-bottom:.2rem; }
+.dash-card .stat-val { font-family:var(--mono); font-size:1.6rem; font-weight:700; line-height:1.2; }
+.dash-card .stat-sub { font-size:.72rem; color:var(--fg3); margin-top:.15rem; }
+.dash-card .stat-trend { position:absolute; bottom:.75rem; right:1rem; display:flex; gap:2px; align-items:end; height:24px; }
+.dash-card .stat-trend span { width:3px; border-radius:2px; background:var(--accent); opacity:.4; transition:.3s; }
+.dash-card:hover .stat-trend span { opacity:.7; }
+.dash-card .glow-edge { position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0; transition:.5s; }
+.dash-card:hover .glow-edge { opacity:1; }
+
+.provider-strip { display:flex; gap:.75rem; overflow-x:auto; padding:.25rem 0 .75rem; position:relative; z-index:2; }
+.prov-item { display:flex; align-items:center; gap:.4rem; padding:.25rem .6rem; background:var(--bg3); border:1px solid var(--line); border-radius:20px; font-size:.7rem; color:var(--fg2); white-space:nowrap; transition:.2s; cursor:default; }
+.prov-item:hover { border-color:rgba(168,85,247,.2); background:var(--bg2); }
+.prov-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+
+.quick-actions { display:flex; gap:.75rem; margin-bottom:1.5rem; flex-wrap:wrap; position:relative; z-index:2; }
+.qa-btn { display:inline-flex; align-items:center; gap:.45rem; padding:.45rem .9rem; background:var(--bg3); border:1px solid var(--line); border-radius:var(--radius-sm); color:var(--fg2); font-size:.78rem; cursor:pointer; transition:.2s; text-decoration:none; }
+.qa-btn:hover { background:var(--accent-glow); border-color:rgba(168,85,247,.3); color:var(--fg); }
+
+.chart-wrap { position:relative; z-index:2; background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; animation:slideUp .5s ease .22s backwards; }
+.chart-wrap .chart-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.chart-wrap .chart-hdr h3 { font-size:.9rem; font-weight:600; }
+.chart-wrap .chart-hdr span { font-size:.7rem; color:var(--fg3); }
+.chart-wrap svg { display:block; width:100%; height:auto; }
+
+.activity-feed { position:relative; z-index:2; background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; animation:slideUp .5s ease .32s backwards; }
+.activity-feed .feed-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:.75rem; }
+.activity-feed .feed-hdr h3 { font-size:.9rem; font-weight:600; }
+.feed-item { display:flex; align-items:center; gap:.75rem; padding:.5rem 0; border-bottom:1px solid var(--line); font-size:.8rem; }
+.feed-item:last-child { border-bottom:none; }
+.feed-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.feed-model { font-family:var(--mono); font-size:.72rem; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.feed-time { color:var(--fg3); font-size:.68rem; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -251,14 +303,18 @@ function setupAuth() {
 // ============ OVERVIEW ============
 
 function overview() {
-  return '<div class="main"><div class="page-header"><h1>Dashboard</h1><p>Usage overview</p></div>' +
-    '<div class="stats-grid">' +
-    '<div class="stat-card"><div class="label">Total Tokens</div><div class="value" id="stat-tokens" style="color:var(--accent)">—</div></div>' +
-    '<div class="stat-card"><div class="label">Total Cost</div><div class="value" id="stat-cost" style="color:var(--yellow)">—</div></div>' +
-    '<div class="stat-card"><div class="label">Requests</div><div class="value" id="stat-requests" style="color:var(--fg)">—</div></div>' +
-    '<div class="stat-card"><div class="label">Active Keys</div><div class="value" style="color:var(--fg)" id="stat-keys">—</div></div></div>' +
-    '<div class="card"><div class="card-header"><h3>Daily Usage (7 days)</h3></div>' +
-    '<div id="daily-chart" style="padding: .5rem 1rem 1.5rem;display:flex;align-items:end;gap:.4rem;height:120px"><span style="color:var(--fg3)">Loading...</span></div></div></div>';
+  return '<div class="main dash-bg">' +
+    '<div class="page-header"><h1>Welcome back</h1><p style="color:var(--fg2);font-size:.9rem">' + esc(STATE.user.email) + ' · <span class="tag tag-' + STATE.user.tier + '">' + STATE.user.tier.toUpperCase() + '</span></p></div>' +
+    '<div class="dash-grid">' +
+    '<div class="stat-row">' +
+    '<div class="dash-card" id="card-1"><div class="glow-edge"></div><span class="icon">▣</span><div class="stat-label">Total Tokens</div><div class="stat-val" id="stat-tokens" style="color:var(--accent)">—</div><div class="stat-sub">lifetime usage</div><div class="stat-trend" id="trend-tokens"></div></div>' +
+    '<div class="dash-card" id="card-2"><div class="glow-edge"></div><span class="icon">◈</span><div class="stat-label">Total Cost</div><div class="stat-val" id="stat-cost" style="color:var(--cyan)">—</div><div class="stat-sub">all providers</div><div class="stat-trend" id="trend-cost"></div></div>' +
+    '<div class="dash-card" id="card-3"><div class="glow-edge"></div><span class="icon">⇶</span><div class="stat-label">Requests</div><div class="stat-val" id="stat-requests" style="color:var(--green)">—</div><div class="stat-sub">total API calls</div><div class="stat-trend" id="trend-reqs"></div></div>' +
+    '<div class="dash-card" id="card-4"><div class="glow-edge"></div><span class="icon">⚷</span><div class="stat-label">Active Keys</div><div class="stat-val" id="stat-keys" style="color:var(--yellow)">—</div><div class="stat-sub">API keys in use</div><div class="stat-trend" id="trend-keys"></div></div></div>' +
+    '<div class="quick-actions"><a class="qa-btn" href="#models">☰ Browse Models</a><a class="qa-btn" href="#keys">🔑 New API Key</a><a class="qa-btn" href="#usage">📊 View Usage</a><a class="qa-btn" href="#byok">➕ Add My Key</a></div>' +
+    '<div class="provider-strip" id="prov-strip"></div>' +
+    '<div class="chart-wrap"><div class="chart-hdr"><h3>Daily Usage</h3><span>Last 7 days</span></div><svg id="usage-chart" viewBox="0 0 340 100" preserveAspectRatio="none"><defs><linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs></svg></div>' +
+    '<div class="activity-feed"><div class="feed-hdr"><h3>Recent Activity</h3></div><div id="feed-list"><div style="color:var(--fg3);font-size:.82rem;padding:.5rem 0">Loading...</div></div></div></div></div>';
 }
 
 async function loadOverview() {
@@ -267,23 +323,104 @@ async function loadOverview() {
       api('/v1/usage'), api('/v1/keys'),
     ]);
     const stats = u.stats || u;
-    document.getElementById('stat-tokens').textContent = fmt(stats.total_tokens || stats.total_usage || 0);
-    document.getElementById('stat-cost').textContent = '$' + (stats.total_cost || 0).toFixed(4);
-    document.getElementById('stat-requests').textContent = fmt(stats.total_requests || 0);
-    document.getElementById('stat-keys').textContent = fmt((keys.keys || []).filter((k: any) => k.active).length);
+    const activeKeyCount = (keys.keys || []).filter((k: any) => k.active).length;
 
+    // Animate stat values
+    animateVal('stat-tokens', fmt(stats.total_tokens || stats.total_usage || 0));
+    animateVal('stat-cost', '$' + (stats.total_cost || 0).toFixed(4));
+    animateVal('stat-requests', fmt(stats.total_requests || 0));
+    animateVal('stat-keys', fmt(activeKeyCount));
+
+    // Trend micro-bars
     const days = stats.daily || u.daily || [];
-    const chart = document.getElementById('daily-chart');
-    if (!days.length) return;
-    const max = Math.max(...days.map((d: any) => d.tokens || d.total_tokens || 1));
-    chart.innerHTML = days.map((d: any) => {
-      const v = d.tokens || d.total_tokens || 0;
-      const pct = max > 0 ? (v / max * 100) : 0;
-      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
-        '<div style="width:100%;background:linear-gradient(to top,var(--purple-dim),var(--accent));border-radius:4px 4px 0 0;height:' + pct + '%;min-height:4px;transition:.3s"></div>' +
-        '<span style="font-size:.6rem;color:var(--fg3)">' + (d.day || '').slice(5) + '</span></div>';
-    }).join('');
+    trendBars('trend-tokens', days.map((d: any) => d.tokens || d.total_tokens || 0), 'var(--accent)');
+    trendBars('trend-cost', days.map((d: any) => d.cost || d.total_cost || 0), 'var(--cyan)');
+    trendBars('trend-reqs', days.map((d: any) => d.requests || 0), 'var(--green)');
+    trendBars('trend-keys', [activeKeyCount], 'var(--yellow)');
+
+    // Provider status strip
+    const providers = [
+      { id:'deepseek', label:'DeepSeek', color:'#825aff' },
+      { id:'groq', label:'Groq', color:'#f26432' },
+      { id:'nvidia', label:'NVIDIA', color:'#76b900' },
+      { id:'mistral', label:'Mistral', color:'#ffd200' },
+      { id:'minimax', label:'MiniMax', color:'#ff6496' },
+      { id:'mimo', label:'MiMo', color:'#ff8200' },
+      { id:'siliconflow', label:'SiliconFlow', color:'#00b4ff' },
+      { id:'zhipu', label:'Zhipu', color:'#ff5050' },
+      { id:'qwen', label:'Qwen', color:'#ffb400' },
+      { id:'openai', label:'OpenAI', color:'#00c896' },
+    ];
+    const provStrip = document.getElementById('prov-strip');
+    if (provStrip) {
+      const byProvider = (u.by_provider || []);
+      provStrip.innerHTML = providers.map(p => {
+        const used = byProvider.find((b: any) => b.provider === p.id);
+        return '<div class="prov-item" title="' + p.label + ': ' + fmt(used?.total_tokens || 0) + ' tokens"><span class="prov-dot" style="background:' + p.color + ';box-shadow:0 0 4px ' + p.color + '"></span>' + p.label + '</div>';
+      }).join('');
+    }
+
+    // SVG area chart
+    const chart = document.getElementById('usage-chart');
+    if (chart && days.length > 0) {
+      const vals = days.map((d: any) => d.tokens || d.total_tokens || 0);
+      const mx = Math.max(...vals, 1);
+      const w = 340, h = 80;
+      const pts = vals.map((v: number, i: number) => {
+        const x = (i / (vals.length - 1 || 1)) * w;
+        const y = h - (v / mx) * (h - 4) - 2;
+        return x + ',' + y;
+      });
+      const poly = '0,' + h + ' ' + pts.join(' ') + ' ' + w + ',' + h;
+      const line = pts.join(' ');
+      chart.innerHTML =
+        '<defs><linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".4"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>' +
+        '<polygon points="' + poly + '" fill="url(#area-grad)" opacity="0.9"/>' +
+        '<polyline points="' + line + '" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      // Day labels below chart
+      const labels = document.createElement('div');
+      labels.style.cssText = 'display:flex;justify-content:space-between;margin-top:6px;font-size:.6rem;color:var(--fg3);font-family:var(--mono)';
+      days.forEach((d: any) => {
+        const span = document.createElement('span');
+        span.textContent = (d.day || '').slice(5) || '—';
+        labels.appendChild(span);
+      });
+      chart.parentElement?.appendChild(labels);
+    }
+
+    // Recent activity (from usage by_provider)
+    const feed = document.getElementById('feed-list');
+    if (feed) {
+      const acts = (u.by_provider || []).slice(0, 6);
+      if (acts.length) {
+        const colors: Record<string,string> = { deepseek:'#825aff', groq:'#f26432', nvidia:'#76b900', mistral:'#ffd200', minimax:'#ff6496', mimo:'#ff8200', siliconflow:'#00b4ff', zhipu:'#ff5050', qwen:'#ffb400', openai:'#00c896' };
+        feed.innerHTML = acts.map((a: any) =>
+          '<div class="feed-item"><span class="feed-dot" style="background:' + (colors[a.provider] || 'var(--fg3)') + '"></span>' +
+          '<span class="feed-model">' + a.provider + '</span>' +
+          '<span style="color:var(--fg2)">' + fmt(a.total_tokens || 0) + ' tokens</span>' +
+          '<span class="feed-time">' + fmt(a.request_count || 0) + ' req</span></div>'
+        ).join('');
+      } else {
+        feed.innerHTML = '<div style="color:var(--fg3);font-size:.82rem;padding:.5rem 0">No activity yet. Start using the API!</div>';
+      }
+    }
   } catch {}
+}
+
+function animateVal(id: string, val: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+}
+
+function trendBars(id: string, vals: number[], color: string) {
+  const el = document.getElementById(id);
+  if (!el || !vals.length) return;
+  const mx = Math.max(...vals, 1);
+  el.innerHTML = vals.slice(-7).map(v => {
+    const h = Math.max(3, (v / mx) * 22);
+    return '<span style="height:' + h + 'px;background:' + color + '"></span>';
+  }).join('');
 }
 
 // ============ API KEYS ============
