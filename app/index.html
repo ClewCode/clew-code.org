@@ -8,11 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #08080f; --bg2: #0f0f1a; --bg3: #18182a;
-  --fg: #e4e4e7; --fg2: #9494a8; --fg3: #5c5c78;
-  --accent: #a855f7; --accent2: #c084fc; --accent-glow: rgba(168,85,247,.15);
-  --cyan: #06b6d4; --cyan-dim: rgba(6,182,212,.12);
-  --purple-dim: #2d0a4e; --line: #1e1e30;
+  --bg: #0e0e16; --bg2: #16161f; --bg3: #1e1e2d;
+  --fg: #e8e8ed; --fg2: #a0a0b8; --fg3: #6a6a82;
+  --accent: #a855f7; --accent2: #c084fc; --accent-glow: rgba(168,85,247,.12);
+  --cyan: #06b6d4; --cyan-dim: rgba(6,182,212,.1);
+  --purple-dim: #2d0a4e; --line: #2a2a3a;
   --radius: 12px; --radius-sm: 8px;
   --red: #ef4444; --green: #22c55e; --yellow: #f59e0b; --orange: #f97316;
   --mono: 'JetBrains Mono', monospace;
@@ -324,7 +324,7 @@ async function loadOverview() {
       api('/v1/usage'), api('/v1/keys'),
     ]);
     const stats = u.stats || u;
-    const activeKeyCount = (keys.keys || []).filter((k: any) => k.active).length;
+    const activeKeyCount = (keys.keys || []).filter((k) => k.active).length;
 
     // Animate stat values
     animateVal('stat-tokens', fmt(stats.total_tokens || stats.total_usage || 0));
@@ -334,9 +334,9 @@ async function loadOverview() {
 
     // Trend micro-bars
     const days = stats.daily || u.daily || [];
-    trendBars('trend-tokens', days.map((d: any) => d.tokens || d.total_tokens || 0), 'var(--accent)');
-    trendBars('trend-cost', days.map((d: any) => d.cost || d.total_cost || 0), 'var(--cyan)');
-    trendBars('trend-reqs', days.map((d: any) => d.requests || 0), 'var(--green)');
+    trendBars('trend-tokens', days.map((d) => d.tokens || d.total_tokens || 0), 'var(--accent)');
+    trendBars('trend-cost', days.map((d) => d.cost || d.total_cost || 0), 'var(--cyan)');
+    trendBars('trend-reqs', days.map((d) => d.requests || 0), 'var(--green)');
     trendBars('trend-keys', [activeKeyCount], 'var(--yellow)');
 
     // Provider status strip
@@ -356,7 +356,7 @@ async function loadOverview() {
     if (provStrip) {
       const byProvider = (u.by_provider || []);
       provStrip.innerHTML = providers.map(p => {
-        const used = byProvider.find((b: any) => b.provider === p.id);
+        const used = byProvider.find((b) => b.provider === p.id);
         return '<div class="prov-item" title="' + p.label + ': ' + fmt(used?.total_tokens || 0) + ' tokens"><span class="prov-dot" style="background:' + p.color + ';box-shadow:0 0 4px ' + p.color + '"></span>' + p.label + '</div>';
       }).join('');
     }
@@ -364,10 +364,10 @@ async function loadOverview() {
     // SVG area chart
     const chart = document.getElementById('usage-chart');
     if (chart && days.length > 0) {
-      const vals = days.map((d: any) => d.tokens || d.total_tokens || 0);
+      const vals = days.map((d) => d.tokens || d.total_tokens || 0);
       const mx = Math.max(...vals, 1);
       const w = 340, h = 80;
-      const pts = vals.map((v: number, i: number) => {
+      const pts = vals.map((v, i) => {
         const x = (i / (vals.length - 1 || 1)) * w;
         const y = h - (v / mx) * (h - 4) - 2;
         return x + ',' + y;
@@ -381,7 +381,7 @@ async function loadOverview() {
       // Day labels below chart
       const labels = document.createElement('div');
       labels.style.cssText = 'display:flex;justify-content:space-between;margin-top:6px;font-size:.6rem;color:var(--fg3);font-family:var(--mono)';
-      days.forEach((d: any) => {
+      days.forEach((d) => {
         const span = document.createElement('span');
         span.textContent = (d.day || '').slice(5) || '—';
         labels.appendChild(span);
@@ -394,8 +394,8 @@ async function loadOverview() {
     if (feed) {
       const acts = (u.by_provider || []).slice(0, 6);
       if (acts.length) {
-        const colors: Record<string,string> = { deepseek:'#825aff', groq:'#f26432', nvidia:'#76b900', mistral:'#ffd200', minimax:'#ff6496', mimo:'#ff8200', siliconflow:'#00b4ff', zhipu:'#ff5050', qwen:'#ffb400', openai:'#00c896' };
-        feed.innerHTML = acts.map((a: any) =>
+        const colors = { deepseek:'#825aff', groq:'#f26432', nvidia:'#76b900', mistral:'#ffd200', minimax:'#ff6496', mimo:'#ff8200', siliconflow:'#00b4ff', zhipu:'#ff5050', qwen:'#ffb400', openai:'#00c896' };
+        feed.innerHTML = acts.map((a) =>
           '<div class="feed-item"><span class="feed-dot" style="background:' + (colors[a.provider] || 'var(--fg3)') + '"></span>' +
           '<span class="feed-model">' + a.provider + '</span>' +
           '<span style="color:var(--fg2)">' + fmt(a.total_tokens || 0) + ' tokens</span>' +
@@ -408,13 +408,13 @@ async function loadOverview() {
   } catch {}
 }
 
-function animateVal(id: string, val: string) {
+function animateVal(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
   el.textContent = val;
 }
 
-function trendBars(id: string, vals: number[], color: string) {
+function trendBars(id, vals, color) {
   const el = document.getElementById(id);
   if (!el || !vals.length) return;
   const mx = Math.max(...vals, 1);
@@ -584,7 +584,7 @@ async function loadMedia() {
     const tbody = document.getElementById('media-table');
     const items = d.history || [];
     if (!items.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">No media generated yet. Try <a href="#models" style="color:var(--accent)">image generation</a>.</td></tr>'; return; }
-    tbody.innerHTML = items.map((m: any) => {
+    tbody.innerHTML = items.map((m) => {
       const type = m.model && (m.model.includes('image') || m.model.includes('dall-e')) ? '🖼️ Image' : '🎬 Video';
       return '<tr><td style="font-family:var(--mono);font-size:.82rem">' + m.model + '</td>' +
         '<td><span class="tag tag-' + m.provider + '">' + m.provider + '</span></td>' +
@@ -618,7 +618,7 @@ async function loadUsage() {
 
     const byProvider = stats.by_provider || d.by_provider || [];
     const pt = document.getElementById('usage-by-provider');
-    pt.innerHTML = byProvider.length ? byProvider.map((p: any) =>
+    pt.innerHTML = byProvider.length ? byProvider.map((p) =>
       '<tr><td><span class="tag tag-' + p.provider + '">' + p.provider + '</span></td>' +
       '<td>' + fmt(p.requests || 0) + '</td>' +
       '<td>' + fmt(p.prompt_tokens || 0) + '</td>' +
@@ -629,8 +629,8 @@ async function loadUsage() {
     const days = stats.daily || d.daily || [];
     const chart = document.getElementById('usage-chart');
     if (!days.length) return;
-    const max = Math.max(...days.map((d: any) => d.tokens || d.total_tokens || 1));
-    chart.innerHTML = days.map((d: any) => {
+    const max = Math.max(...days.map((d) => d.tokens || d.total_tokens || 1));
+    chart.innerHTML = days.map((d) => {
       const v = d.tokens || d.total_tokens || 0;
       const pct = max > 0 ? (v / max * 100) : 0;
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
@@ -659,7 +659,7 @@ async function loadBilling() {
     const tbody = document.getElementById('invoice-table');
     const inv = d.invoices || [];
     if (!inv.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--fg3);text-align:center;padding:1rem">No invoices yet</td></tr>'; return; }
-    tbody.innerHTML = inv.map((i: any) =>
+    tbody.innerHTML = inv.map((i) =>
       '<tr><td>' + i.month + '</td><td>' + fmt(i.requests) + '</td><td>' + fmt(i.tokens) + '</td><td>$' + (i.cost || 0).toFixed(4) + '</td></tr>'
     ).join('');
   } catch {}
@@ -714,10 +714,10 @@ async function loadSettings() {
 }
 
 async function saveSettings() {
-  const model = (document.getElementById('pref-model') as HTMLInputElement)?.value || '';
-  const providers = (document.getElementById('pref-providers') as HTMLInputElement)?.value || '';
-  const telemetry = (document.getElementById('pref-telemetry') as HTMLInputElement)?.checked || false;
-  const preferred_providers = providers.split(',').map((s: string) => s.trim()).filter(Boolean);
+  const model = (document.getElementById('pref-model'))?.value || '';
+  const providers = (document.getElementById('pref-providers'))?.value || '';
+  const telemetry = (document.getElementById('pref-telemetry'))?.checked || false;
+  const preferred_providers = providers.split(',').map((s) => s.trim()).filter(Boolean);
   try {
     await api('/v1/user/settings', {
       method: 'PUT',
@@ -814,7 +814,7 @@ async function loadAdmin() {
 
     const pt = document.getElementById('admin-providers');
     const providers = pk.providers || {};
-    pt.innerHTML = Object.entries(providers).map(([name, info]: any) =>
+    pt.innerHTML = Object.entries(providers).map(([name, info]) =>
       '<tr><td style="font-weight:600">' + name + '</td>' +
       '<td><span class="tag ' + (info.set ? 'tag-active' : 'tag-revoked') + '">' + (info.set ? (info.poolSize > 0 ? info.poolSize + ' keys' : 'Set') : 'Not set') + '</span></td>' +
       '<td>' + (info.set ? '<button class="btn btn-sm" onclick="switchAdminTab(\'poolkeys\')">Manage</button>' : '<button class="btn btn-primary btn-sm" onclick="switchAdminTab(\'poolkeys\')">Add Key</button>') + '</td></tr>'
@@ -833,7 +833,7 @@ async function loadAdmin() {
 
     const vt = document.getElementById('admin-versions');
     const versions = s.version_distribution || [];
-    vt.innerHTML = versions.length ? versions.map((v: any) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
+    vt.innerHTML = versions.length ? versions.map((v) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
 
     // Load tab-specific data
     if (STATE.adminTab === 'poolkeys') loadPoolKeys();
@@ -851,7 +851,7 @@ async function loadPoolKeys() {
     const pk = await api('/v1/admin/provider-keys');
     const providers = pk.providers || {};
     const tbody = document.getElementById('pool-table');
-    tbody.innerHTML = Object.entries(providers).map(([name, info]: any) =>
+    tbody.innerHTML = Object.entries(providers).map(([name, info]) =>
       '<tr><td style="font-weight:600">' + name + '</td>' +
       '<td>' + (info.poolSize || 0) + ' keys</td>' +
       '<td>' +
@@ -865,7 +865,7 @@ async function viewPoolKeys(provider) {
   try {
     const d = await api('/v1/admin/pool-keys/' + provider);
     const keys = d.keys || [];
-    const msg = keys.map((k: any, i: number) => (i + 1) + '. ' + k.prefix).join('\n');
+    const msg = keys.map((k, i) => (i + 1) + '. ' + k.prefix).join('\n');
     alert('Pool keys for ' + provider + ' (' + keys.length + '):\n\n' + msg);
   } catch (e) { toast('Failed to load', 'error'); }
 }
@@ -898,7 +898,7 @@ async function loadAdminUsage() {
     const byProvider = d.byProvider || [];
 
     const tbody = document.getElementById('admin-usage-table');
-    tbody.innerHTML = byProvider.length ? byProvider.map((p: any) =>
+    tbody.innerHTML = byProvider.length ? byProvider.map((p) =>
       '<tr><td><span class="tag tag-' + p.provider + '">' + p.provider + '</span></td>' +
       '<td>' + fmt(p.requests || 0) + '</td>' +
       '<td>' + fmt(p.pt || 0) + '</td>' +
@@ -910,8 +910,8 @@ async function loadAdminUsage() {
     const daily = d.daily || [];
     const chart = document.getElementById('admin-usage-chart');
     if (!daily.length) { chart.innerHTML = '<span style="color:var(--fg3)">No data</span>'; return; }
-    const max = Math.max(...daily.map((d: any) => d.tokens || 1));
-    chart.innerHTML = daily.map((d: any) => {
+    const max = Math.max(...daily.map((d) => d.tokens || 1));
+    chart.innerHTML = daily.map((d) => {
       const v = d.tokens || 0;
       const pct = max > 0 ? (v / max * 100) : 0;
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px" title="' + d.provider + ' ' + d.day + ': ' + fmt(v) + '">' +
@@ -929,7 +929,7 @@ async function loadAdminByok() {
     const tbody = document.getElementById('admin-byok-table');
     const keys = d.keys || [];
     if (!keys.length) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fg3);text-align:center;padding:1rem">No BYOK keys</td></tr>'; return; }
-    tbody.innerHTML = keys.map((k: any) =>
+    tbody.innerHTML = keys.map((k) =>
       '<tr><td>' + esc(k.email) + '</td>' +
       '<td><span class="tag tag-' + k.provider + '">' + k.provider + '</span></td>' +
       '<td style="font-family:var(--mono);font-size:.8rem">' + k.key_prefix + '...</td>' +
@@ -1004,7 +1004,7 @@ async function loadInstances() {
     const s = await api('/v1/telemetry/stats');
     const versions = s.version_distribution || [];
     const tbody = document.getElementById('instances-table');
-    tbody.innerHTML = versions.length ? versions.map((v: any) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
+    tbody.innerHTML = versions.length ? versions.map((v) => '<tr><td>' + esc(v.version) + '</td><td>' + fmt(v.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No instances</td></tr>';
   } catch {}
 }
 
@@ -1019,7 +1019,7 @@ async function loadEvents() {
     const s = await api('/v1/telemetry/stats');
     const events = s.event_counts || [];
     const tbody = document.getElementById('events-table');
-    tbody.innerHTML = events.length ? events.map((e: any) => '<tr><td>' + esc(e.event) + '</td><td>' + fmt(e.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No events</td></tr>';
+    tbody.innerHTML = events.length ? events.map((e) => '<tr><td>' + esc(e.event) + '</td><td>' + fmt(e.count) + '</td></tr>').join('') : '<tr><td colspan="2" style="color:var(--fg3);text-align:center;padding:1rem">No events</td></tr>';
   } catch {}
 }
 
@@ -1038,7 +1038,7 @@ async function loadProjects() {
     const tbody = document.getElementById('projects-table');
     const projects = d.projects || [];
     if (!projects.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--fg3);text-align:center;padding:1rem">No projects</td></tr>'; return; }
-    tbody.innerHTML = projects.map((p: any) => '<tr><td>' + esc(p.name) + '</td><td style="color:var(--fg2)">' + esc(p.description || '') + '</td>' +
+    tbody.innerHTML = projects.map((p) => '<tr><td>' + esc(p.name) + '</td><td style="color:var(--fg2)">' + esc(p.description || '') + '</td>' +
       '<td>' + (p.key_count || 0) + '</td><td>' + fmt(p.monthly_tokens || 0) + '</td>' +
       '<td style="font-size:.8rem;color:var(--fg2)">' + (p.created_at ? new Date(p.created_at).toLocaleDateString() : '') + '</td>' +
       '<td><button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.id + '\')">Delete</button></td></tr>').join('');
@@ -1075,7 +1075,7 @@ async function loadOrgs() {
     const list = document.getElementById('orgs-list');
     const orgs = d.orgs || [];
     if (!orgs.length) { list.innerHTML = '<p style="color:var(--fg3)">No organizations</p>'; return; }
-    list.innerHTML = orgs.map((o: any) =>
+    list.innerHTML = orgs.map((o) =>
       '<div class="card"><div class="card-header"><h3>' + esc(o.name) + '</h3>' +
       '<div><span class="tag tag-enterprise">Owner</span></div></div>' +
       '<p style="padding:0 1rem 1rem;color:var(--fg2);font-size:.85rem">ID: ' + esc(o.id) + ' · Members: ' + o.member_count +
