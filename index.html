@@ -3,19 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clew Code — The open-source AI coding agent with 27+ providers</title>
-<meta name="description" content="Clew Code is an open-source AI coding agent with 27+ providers, persistent memory, LAN peer swarm, 75+ built-in tools, and a self-hosted API gateway.">
-<meta name="keywords" content="AI coding agent, open source, claude code alternative, AI CLI, coding assistant, multi-provider AI">
+<title>Clew Code — Open-source AI Coding Agent & API Gateway | 27+ Providers</title>
+<meta name="description" content="Clew Code is an open-source AI coding agent with 27+ providers + a self-hosted AI API gateway serving 234 models with Free and $10/mo Go plans. OpenAI-compatible.">
+<meta name="keywords" content="AI coding agent, AI API gateway, open source AI, OpenAI alternative, LLM API, multi-provider AI, AI coding CLI, DeepSeek API, GPT API, AI inference platform">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://clew-code.org">
-<meta property="og:title" content="Clew Code — Open-source AI coding agent with 27+ providers">
-<meta property="og:description" content="Code with any AI, anywhere. Open-source, local-first, multi-provider AI coding agent with API gateway.">
+<!-- Open Graph -->
+<meta property="og:title" content="Clew Code — Open-source AI Coding Agent & API Gateway">
+<meta property="og:description" content="Code with any AI, anywhere. 27+ providers, persistent memory, LAN peer swarm — plus a hosted API gateway with 234 models, Free & $10/mo Go plan.">
 <meta property="og:url" content="https://clew-code.org">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://clew-code.org/assets/og-image.png">
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Clew Code — Open-source AI coding agent">
-<meta name="twitter:description" content="Code with any AI, anywhere. 27+ providers, persistent memory, LAN peer swarm.">
+<meta name="twitter:title" content="Clew Code — Open-source AI Coding Agent & API Gateway">
+<meta name="twitter:description" content="27+ providers, 234 models. CLI agent for your terminal + hosted API for your apps. Free tier, $10/mo Go plan.">
+<!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -23,9 +26,25 @@
   "name": "Clew Code",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, macOS, Windows",
-  "description": "Open-source AI coding agent with 27+ providers, persistent memory, LAN peer swarm, and 75+ built-in tools.",
+  "description": "Open-source AI coding agent with 27+ providers, persistent memory, LAN peer swarm, 75+ built-in tools, and a hosted API gateway with 234 models.",
   "url": "https://clew-code.org",
-  "author": { "@type": "Organization", "name": "Clew Code" }
+  "author": { "@type": "Organization", "name": "Clew Code", "url": "https://clew-code.org" },
+  "offers": [
+    { "@type": "Offer", "name": "Free Tier", "price": "0", "priceCurrency": "USD", "description": "Free models with rate limits" },
+    { "@type": "Offer", "name": "Go Plan", "price": "10", "priceCurrency": "USD", "description": "$10/month for 200+ standard models" },
+    { "@type": "Offer", "name": "Pay-as-you-go", "priceCurrency": "USD", "description": "Top-up credit for premium models (GPT, Claude, etc.)" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebAPI",
+  "name": "Clew API",
+  "description": "OpenAI-compatible AI inference API with 234 models from 27+ providers. Free tier, $10/mo Go plan, pay-as-you-go premium models.",
+  "documentation": "https://api.clew-code.org",
+  "url": "https://api.clew-code.org",
+  "provider": { "@type": "Organization", "name": "Clew Code" }
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -673,6 +692,26 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
   color: var(--fg2);
   margin-top: .25rem;
 }
+/* API tier cards */
+.api-tiers { gap: 1.25rem; }
+.api-tier {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.api-tier:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(168,85,247,0.12); }
+.api-tier-icon { width: 44px; height: 44px; margin: 0 auto 1rem; color: var(--accent); }
+.api-tier h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+.api-price { font-size: 1.75rem; font-weight: 700; color: var(--accent2); margin-bottom: 0.75rem; }
+.api-tier p { font-size: 0.85rem; color: var(--fg2); line-height: 1.5; }
+.pro-tier { border-color: var(--accent-dim); background: linear-gradient(135deg, var(--bg2) 0%, var(--accent-dim) 100%); }
+.enterprise-tier { border-color: var(--accent-dim); }
 </style>
 </head>
 <body>
@@ -685,6 +724,7 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
     <a href="#providers" data-i18n="nav.providers">Providers</a>
     <a href="#usage" data-i18n="nav.usage">Usage</a>
     <a href="#works" data-i18n="nav.how-it-works">How it works</a>
+    <a href="#api" data-i18n="nav.api">API</a>
     <a href="#faq" data-i18n="nav.faq">FAQ</a>
     <a href="https://api.clew-code.org" class="hide-mobile" data-i18n="nav.dashboard">Dashboard</a>
     <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">TH</button>
@@ -965,6 +1005,47 @@ footer .links { display: flex; justify-content: center; gap: 1.5rem; margin-bott
   </div>
 </section>
 
+<!-- API Section -->
+<section id="api">
+  <div class="container fade-up">
+    <div class="section-label" data-i18n="api.label">API Gateway</div>
+    <h2 class="section-title" data-i18n="api.title">234 models.<br>One API endpoint.</h2>
+    <p class="section-sub" data-i18n="api.subtitle">OpenAI-compatible API for your apps. Start free, upgrade for more.</p>
+
+    <div class="api-tiers" style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:2.5rem">
+      <div class="api-tier free-tier">
+        <div class="api-tier-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3 data-i18n="api.free.title">Free</h3>
+        <div class="api-price" data-i18n="api.free.price">$0 / month</div>
+        <p data-i18n="api.free.desc">clew/free smart routing. 12 free models. 10 req/min. No credit card required.</p>
+      </div>
+      <div class="api-tier pro-tier">
+        <div class="api-tier-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h3 data-i18n="api.go.title">Go Plan</h3>
+        <div class="api-price" data-i18n="api.go.price">$10 / month</div>
+        <p data-i18n="api.go.desc">200+ standard models. DeepSeek, Qwen, MiniMax, GLM, Kimi, MiMo. 100 req/min. Webhooks + analytics.</p>
+      </div>
+      <div class="api-tier enterprise-tier">
+        <div class="api-tier-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v.01"/></svg>
+        </div>
+        <h3 data-i18n="api.payg.title">Pay-as-you-go</h3>
+        <div class="api-price" data-i18n="api.payg.price">Top-up from $5</div>
+        <p data-i18n="api.payg.desc">Premium models — GPT, Claude, Gemini. No markup on token pricing. 5.5% platform fee on top-up only.</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem">
+      <a href="https://api.clew-code.org" class="btn btn-primary" style="padding:.75rem 2rem;font-size:1rem" data-i18n="api.cta">Go to Dashboard &nearr;</a>
+      <a href="https://api.clew-code.org/v1/models" class="btn btn-outline" style="padding:.75rem 2rem;font-size:1rem" data-i18n="api.models">Browse 234 Models &nearr;</a>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta">
   <h2 data-i18n="cta.title">Ready to code<br>on your terms?</h2>
@@ -1127,6 +1208,7 @@ const i18n = {
     'nav.providers': 'Providers',
     'nav.usage': 'Usage',
     'nav.how-it-works': 'How it works',
+    'nav.api': 'API',
     'nav.faq': 'FAQ',
     'nav.dashboard': 'Dashboard',
     'hero.badge': 'v0.3.2 · 27 providers · Open source',
@@ -1197,6 +1279,20 @@ const i18n = {
     'cta.install': 'Install Clew Code',
     'cta.star': 'Star on GitHub ↗',
     'footer.license': 'Clew Code — GPL-3.0 Licensed',
+    'api.label': 'API Gateway',
+    'api.title': '234 models.<br>One API endpoint.',
+    'api.subtitle': 'OpenAI-compatible API for your apps. Start free, upgrade for more.',
+    'api.free.title': 'Free',
+    'api.free.price': '$0 / month',
+    'api.free.desc': 'clew/free smart routing. 12 free models. 10 req/min. No credit card required.',
+    'api.go.title': 'Go Plan',
+    'api.go.price': '$10 / month',
+    'api.go.desc': '200+ standard models. DeepSeek, Qwen, MiniMax, GLM, Kimi, MiMo. 100 req/min. Webhooks + analytics.',
+    'api.payg.title': 'Pay-as-you-go',
+    'api.payg.price': 'Top-up from $5',
+    'api.payg.desc': 'Premium models — GPT, Claude, Gemini. No markup on token pricing. 5.5% platform fee only.',
+    'api.cta': 'Go to Dashboard ↗',
+    'api.models': 'Browse 234 Models ↗',
     'cookie.title': 'We use cookies',
     'cookie.desc': 'Clew Code uses a session cookie (clew_session) to keep you logged in when using the dashboard. No tracking, no ads, no third-party cookies.',
     'cookie.accept': 'Accept',
@@ -1208,6 +1304,7 @@ const i18n = {
     'nav.providers': 'ผู้ให้บริการ',
     'nav.usage': 'การใช้งาน',
     'nav.how-it-works': 'วิธีการทำงาน',
+    'nav.api': 'API',
     'nav.faq': 'คำถามพบบ่อย',
     'nav.dashboard': 'แดชบอร์ด',
     'hero.badge': 'v0.3.2 · 27 ผู้ให้บริการ · โอเพนซอร์ส',
@@ -1278,6 +1375,20 @@ const i18n = {
     'cta.install': 'ติดตั้ง Clew Code',
     'cta.star': 'กดดาวบน GitHub ↗',
     'footer.license': 'Clew Code — สัญญาอนุญาต GPL-3.0',
+    'api.label': 'API เกตเวย์',
+    'api.title': '234 โมเดล.<br>จุดเชื่อมต่อเดียว',
+    'api.subtitle': 'API แบบ OpenAI-compatible สำหรับแอปของคุณ เริ่มฟรี อัปเกรดเมื่อพร้อม',
+    'api.free.title': 'ฟรี',
+    'api.free.price': '$0 / เดือน',
+    'api.free.desc': 'clew/free smart routing 12 โมเดลฟรี 10 req/นาที ไม่ต้องใช้บัตรเครดิต',
+    'api.go.title': 'Go Plan',
+    'api.go.price': '$10 / เดือน',
+    'api.go.desc': '200+ โมเดลมาตรฐาน DeepSeek, Qwen, MiniMax, GLM, Kimi, MiMo 100 req/นาที Webhook + analytics',
+    'api.payg.title': 'เติมเงินใช้',
+    'api.payg.price': 'เติมขั้นต่ำ $5',
+    'api.payg.desc': 'โมเดลพรีเมียม — GPT, Claude, Gemini ไม่มี markup ต่อ token คิดแค่ 5.5% ตอนเติมเงิน',
+    'api.cta': 'ไปที่แดชบอร์ด ↗',
+    'api.models': 'ดู 234 โมเดล ↗',
     'cookie.title': 'เราใช้คุกกี้',
     'cookie.desc': 'Clew Code ใช้คุกกี้เซสชัน (clew_session) เพื่อให้คุณคงสถานะเข้าสู่ระบบเมื่อใช้แดชบอร์ด ไม่มีการติดตาม โฆษณา หรือคุกกี้ของบุคคลที่สาม',
     'cookie.accept': 'ยอมรับ',
