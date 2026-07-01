@@ -1,1 +1,0 @@
-import{_ as e,o as a,c as s,a0 as l}from"./chunks/framework.B_R3rS_4.js";const g=JSON.parse('{"title":"Clew CLI Docs","description":"","frontmatter":{},"headers":[],"relativePath":"cli.md","filePath":"cli.md"}'),i={name:"cli.md"};function n(d,t,o,r,c,h){return a(),s("div",null,[...t[0]||(t[0]=[l("",43)])])}const y=e(i,[["render",n]]);export{g as __pageData,y as default};
