@@ -112,14 +112,45 @@ Control the session directly using terminal slash commands:
 
 | Command | Purpose |
 | :--- | :--- |
-| `/model` | Change backend provider or model mid-session |
-| `/status` | Display active model, token usage, and session metrics |
-| `/doctor` | Run internal diagnostics and verify provider connections |
-| `/goal` | Define, track, and automatically verify overall task completion |
-| `/memory` | Manage the SQLite memory (init, scan, recall, dashboard) |
-| `/peer` | Discover and manage LAN peers and swarm tasks |
-| `/compact` | Manually trigger context compression and extract facts |
-| `/plan` | Switch to Plan mode (creates tasks, gets manual user approval) |
+| `/model` | Switch provider or model |
+| `/status` | Provider, session, context info |
+| `/doctor` | Diagnostics and provider health checks |
+| `/profile` | Personal profile mode (coding / command center) |
+| `/context` | Active context usage |
+| `/compact` | Compress conversation history + extract memories |
+| `/goal` | Track and verify overall task completion |
+| `/maxmode` | Toggle parallel candidate generation |
+| `/mcp` | Model Context Protocol server management |
+| `/code-review` | Review changed files for bugs |
+| `/simplify` | Cleanup-focused review |
+| `/plugin` | Plugin and hook management |
+| `/bridge` | Bridge mode configuration |
+| `/agent` | Background agent dispatch |
+| `/agents` | TUI Agent dashboard |
+| `/peer` | LAN peers: share, discover, swarm, dashboard |
+| `/remote` | WebSocket remote control |
+| `/daemon` | Autonomous daemon dashboard |
+| `/task` | Scheduled tasks |
+| `/memory` | SQLite memory system management |
+| `/tasks` | Curated task checklist |
+| `/effort` | Set reasoning effort |
+| `/stats` | Session statistics |
+| `/guardian` | Auto-review mode using secondary LLM |
+| `/approve` | Override guardian denials |
+| `/pr` | GitHub PR lifecycle |
+| `/voice` | Voice input |
+| `/buddy` | Companion card |
+| `/team` | Team dashboard |
+| `/bg` | Background sessions |
+| `/plan` | Plan mode |
+| `/vim` | Vim keybindings |
+| `/research` | Research dossier management |
+| `/workflow` | Multi-step workflow automation |
+| `/rewind` | Undo last response |
+| `/upgrade` | Check for updates |
+| `/session` | Session management |
+| `/theme` | Theme switcher |
+| `/skills` | List and manage skills |
 | `/login` | Sign in to Clew Gateway for cloud models and syncing |
 
 ---
