@@ -64,12 +64,20 @@ td { padding: .5rem; border-bottom: 1px solid var(--line); color: var(--fg2); }
 .tag-free { background: var(--bg3); color: var(--fg2); }
 .tag-pro { background: #3b0764; color: var(--accent); }
 .tag-enterprise { background: #132b22; color: var(--green); }
+.tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+.tabs a { display: block; flex: 1; text-align: center; text-decoration: none; font-size: .8rem; font-weight: 500; border-radius: 6px; padding: .4rem .2rem; }
+.tabs a.inactive { background: var(--bg2); border: 1px solid var(--line); color: var(--fg2); }
+.tabs a.active { background: var(--bg3); border: 1px solid var(--accent); color: var(--fg); }
 @media (max-width: 768px) { body { flex-direction: column; } nav { width: 100%; height: auto; position: static; } }
 </style>
 </head>
 <body>
 <nav>
   <a href="/" class="logo">clew<span>docs</span></a>
+  <div class="tabs">
+    <a href="/docs/" class="active">API</a>
+    <a href="/docs/cli.html" class="inactive">CLI</a>
+  </div>
   <div class="section">Getting Started</div>
   <a href="#intro">Introduction</a>
   <a href="#auth">Authentication</a>

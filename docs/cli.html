@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clew CLI — Docs</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f; --bg2: #12121a; --bg3: #1a1a28;
+  --fg: #e4e4e7; --fg2: #a1a1aa; --fg3: #6b6b80;
+  --accent: #a855f7; --accent2: #c084fc; --line: #27272a;
+  --radius: 10px; --green: #22c55e; --red: #ef4444; --yellow: #f59e0b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg);
+  display: flex; -webkit-font-smoothing: antialiased;
+}
+nav {
+  width: 280px; height: 100vh; position: sticky; top: 0;
+  padding: 2rem 1rem; border-right: 1px solid var(--line); overflow-y: auto; flex-shrink: 0;
+}
+nav .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 2rem; display: block; text-decoration: none; }
+nav .logo span { color: var(--fg); }
+nav .section { font-size: .75rem; color: var(--fg3); text-transform: uppercase; letter-spacing: .05em; margin: 1.5rem 0 .5rem 0; font-weight: 600; }
+nav a { display: block; padding: .4rem .75rem; color: var(--fg2); text-decoration: none; font-size: .85rem; border-radius: 6px; }
+nav a:hover { background: var(--bg3); color: var(--fg); }
+.main { flex: 1; max-width: 800px; padding: 3rem 2rem 6rem; }
+h1 { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 .5rem; }
+p { color: var(--fg2); line-height: 1.6; margin-bottom: 1rem; font-size: .9rem; }
+code { font-family: 'JetBrains Mono', monospace; font-size: .8rem; background: var(--bg3); padding: .15rem .4rem; border-radius: 4px; }
+pre {
+  background: var(--bg3); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1rem; overflow-x: auto; margin: 1rem 0; font-size: .8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+pre .c { color: var(--fg3); }
+pre .k { color: var(--accent2); }
+pre .s { color: var(--green); }
+pre .n { color: var(--fg); }
+pre .o { color: var(--yellow); }
+.tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+.tabs a { display: block; flex: 1; text-align: center; text-decoration: none; font-size: .8rem; font-weight: 500; border-radius: 6px; padding: .4rem .2rem; }
+.tabs a.inactive { background: var(--bg2); border: 1px solid var(--line); color: var(--fg2); }
+.tabs a.active { background: var(--bg3); border: 1px solid var(--accent); color: var(--fg); }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .85rem; }
+th { text-align: left; color: var(--fg3); font-weight: 600; padding: .5rem; border-bottom: 1px solid var(--line); }
+td { padding: .5rem; border-bottom: 1px solid var(--line); color: var(--fg2); }
+ul { color: var(--fg2); font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; padding-left: 1.5rem; }
+li { margin-bottom: .25rem; }
+@media (max-width: 768px) { body { flex-direction: column; } nav { width: 100%; height: auto; position: static; } }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">clew<span>docs</span></a>
+  <div class="tabs">
+    <a href="/docs/" class="inactive">API</a>
+    <a href="/docs/cli.html" class="active">CLI</a>
+  </div>
+  <div class="section">Getting Started</div>
+  <a href="#intro">Introduction</a>
+  <a href="#install">Installation</a>
+  <a href="#first-run">First Run</a>
+  <div class="section">Core Concepts</div>
+  <a href="#providers">29 Providers</a>
+  <a href="#memory">Persistent Memory</a>
+  <a href="#swarm">LAN Peer Swarm</a>
+  <a href="#layers">Execution Layers</a>
+  <div class="section">Reference</div>
+  <a href="#commands">Slash Commands</a>
+  <a href="#config">Configuration</a>
+</nav>
+<div class="main">
+
+<h1>Clew CLI Docs</h1>
+<p>Open-source, local-first AI coding agent CLI. Runs on your own hardware using your own API keys — supporting 29 LLM providers.</p>
+
+<h2 id="intro">Introduction</h2>
+<p>Clew Code is an autonomous coding agent that runs directly in your terminal. It features a complete Ink-based React REPL interface, automatic context compaction, SQLite-backed long-term memory, LAN peer discovery for multi-machine swarms, and modular tool integrations.</p>
+
+<h2 id="install">Installation</h2>
+<p>Choose your preferred installation method below:</p>
+
+<h3>One-liner (Quick)</h3>
+<pre><span class="c"># Install globally via npm</span>
+npm install -g clew-code</pre>
+
+<h3>From Source (Bun)</h3>
+<pre><span class="c"># Clone the repository</span>
+git clone https://github.com/ClewCode/ClewCode.git
+cd ClewCode
+
+<span class="c"># Install dependencies & build</span>
+bun install
+bun run build
+
+<span class="c"># Link globally</span>
+bun link</pre>
+
+<h2 id="first-run">First Run</h2>
+<p>Simply type <code>clew</code> in your terminal inside any project directory to launch the interactive REPL:</p>
+<pre>clew</pre>
+<p>To resume a past conversation or launch a specific session, use the session flags:</p>
+<pre><span class="c"># Resume your last active session</span>
+clew --resume last
+
+<span class="c"># Start a plan-mode session (bypasses prompt confirmations)</span>
+clew --plan</pre>
+
+<h2 id="providers">29 Providers</h2>
+<p>Clew Code is provider-agnostic, supporting 29 native LLM engines. Setup your API key as an environment variable before launching the CLI:</p>
+<table>
+  <tr><th>Provider</th><th>Environment Variable</th></tr>
+  <tr><td>OpenAI</td><td><code>OPENAI_API_KEY</code></td></tr>
+  <tr><td>Google Gemini / Code Assist</td><td><code>GOOGLE_API_KEY</code></td></tr>
+  <tr><td>DeepSeek</td><td><code>DEEPSEEK_API_KEY</code></td></tr>
+  <tr><td>Groq</td><td><code>GROQ_API_KEY</code></td></tr>
+  <tr><td>Ollama (Local)</td><td><code>OLLAMA_HOST</code> (defaults to <code>http://localhost:11434</code>)</td></tr>
+  <tr><td>Sakana AI</td><td><code>SAKANA_API_KEY</code></td></tr>
+  <tr><td>Clew Gateway</td><td><code>CLEW_GATEWAY_KEY</code></td></tr>
+</table>
+<p>Switch between providers or models at any time inside a session using the <code>/model</code> slash command.</p>
+
+<h2 id="memory">Persistent Memory</h2>
+<p>Clew Code contains a MiMo-inspired, SQLite-backed long-term memory system. It automatically:</p>
+<ul>
+  <li>Aggregates factoids, style preferences, and architectural decisions about your codebase.</li>
+  <li>Ranks memory importance and frequency of access.</li>
+  <li>Injects relevant context chunks back into the prompt cycles.</li>
+  <li>Stores human-readable markdown summaries locally under <code>~/.clew/memory/</code>.</li>
+</ul>
+
+<h2 id="swarm">LAN Peer Swarm</h2>
+<p>With zero configuration, Clew Code instances discover each other on the local network (LAN) using UDP multicast. You can:</p>
+<ul>
+  <li>Sync project databases and memories across developer machines.</li>
+  <li>Delegate execution tasks to other machines on the LAN.</li>
+  <li>Broadcast bash commands to run concurrently on all peers (Swarm execution).</li>
+</ul>
+
+<h2 id="layers">Execution Layers</h2>
+<p>Tasks are distributed across four isolated layers depending on your workflow:</p>
+<ul>
+  <li><strong>Agent:</strong> The root agent session coordinating permissions, UI, and active memory context.</li>
+  <li><strong>Subagent:</strong> Focus-oriented, short-lived child processes spawned in the background (typically read-only) to solve specific sub-tasks without cluttering your main session.</li>
+  <li><strong>Peer:</strong> Network-connected nodes coordinating LAN swarms.</li>
+  <li><strong>Process Peer:</strong> External CLI/Codex process delegation for running separate specialized model loops.</li>
+</ul>
+
+<h2 id="commands">Slash Commands</h2>
+<p>Control the session directly using terminal slash commands:</p>
+<table>
+  <tr><th>Command</th><th>Purpose</th></tr>
+  <tr><td><code>/model</code></td><td>Change backend provider or model mid-session</td></tr>
+  <tr><td><code>/status</code></td><td>Display active model, token usage, and session metrics</td></tr>
+  <tr><td><code>/doctor</code></td><td>Run internal diagnostics and verify provider connections</td></tr>
+  <tr><td><code>/goal</code></td><td>Define, track, and automatically verify overall task completion</td></tr>
+  <tr><td><code>/memory</code></td><td>Manage the SQLite memory (init, scan, recall, dashboard)</td></tr>
+  <tr><td><code>/peer</code></td><td>Discover and manage LAN peers and swarm tasks</td></tr>
+  <tr><td><code>/compact</code></td><td>Manually trigger context compression and extract facts</td></tr>
+  <tr><td><code>/plan</code></td><td>Switch to Plan mode (creates tasks, gets manual user approval)</td></tr>
+  <tr><td><code>/login</code></td><td>Sign in to Clew Gateway for cloud models and syncing</td></tr>
+</table>
+
+<h2 id="config">Configuration</h2>
+<p>Settings files are stored in your home directory under <code>~/.clew/</code>:</p>
+<ul>
+  <li><code>~/.clew/settings.json</code> — Shared global configurations, default models, and UI preferences.</li>
+  <li><code>~/.clew/settings.local.json</code> — Local overrides (private config and custom developer setups).</li>
+</ul>
+
+</div>
+</body>
+</html>
